@@ -23,11 +23,12 @@
 
         <TextBox x:Name="saveTextbox" HorizontalAlignment="Left" PreviewMouseLeftButtonDown="SaveTextbox_Click" Height="25" Margin="246,14,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="300"/>
         <TextBox x:Name="backupTextbox" HorizontalAlignment="Left" PreviewMouseLeftButtonUp="BackupTextbox_Click" Height="25" TextWrapping="Wrap"  Text="" VerticalAlignment="Top" Width="300" Margin="246,51,0,0"/>
-        <TextBox x:Name="intervalTextBox" HorizontalAlignment="Left" Height="25" TextWrapping="Wrap" Text="300" VerticalAlignment="Top" Width="300" Margin="246,87,0,0"/>
-        <TextBox x:Name="numToKeepTextbox" HorizontalAlignment="Left" ToolTip="The oldest backup will be deleted once the limit is reached. Enter 0 to keep all saves." Height="25" TextWrapping="Wrap" Text="10" VerticalAlignment="Top" Width="300" Margin="246,123,0,0"/>
-        
-        
+        <TextBox x:Name="intervalTextBox" IsReadOnly="{Binding ElementName=onEventSaves, Path=IsChecked}" HorizontalAlignment="Left" Height="25" TextWrapping="Wrap" Text="300" VerticalAlignment="Top" Width="300" Margin="246,87,0,0"/>
+        <TextBox x:Name="numToKeepTextbox" HorizontalAlignment="Left" ToolTip="The oldest backup will be deleted once the limit is reached. Enter 0 to keep all saves. This may create duplicate backups if the save has not been updated within the interval." Height="25" TextWrapping="Wrap" Text="10" VerticalAlignment="Top" Width="300" Margin="246,123,0,0"/>
+
+
         <ComboBox x:Name="restoreBackupCombo" HorizontalAlignment="Left" Margin="246,162,0,0" VerticalAlignment="Top" Width="300"/>
+        <CheckBox x:Name="onEventSaves" Content="Enable Event Driven Saves" ToolTip="Instead of backups occuring on an interval, a backup occurs every time the save file changes." HorizontalAlignment="Left" Margin="350,265,0,0" VerticalAlignment="Top" Width="175"/>
 
     </Grid>
 </Window>
