@@ -14,6 +14,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using IronmanSaveBackup.Properties;
 
 namespace IronmanSaveBackup
 {
@@ -27,20 +28,109 @@ namespace IronmanSaveBackup
         public MainWindow()
         {
             InitializeComponent();
+            OnEventSaves.IsChecked = Settings.Default.EnableOnEventBackup;
+            BackupTextbox.Text = Settings.Default.BackupLocation;
+            SaveTextbox.Text = Settings.Default.SaveLocation;
+            IntervalSlider.Value = Settings.Default.SaveInterval;
+            BackupKeepSlider.Value = Settings.Default.KeepBackupNumber;
+            if (OnEventSaves.IsChecked == true)
+            {
+                IntervalSlider.IsEnabled = false;
+                IntervalTextbox.IsEnabled = false;
+            }
+
+
         }
 
         private void BackupTextbox_Click(object sender, MouseButtonEventArgs e)
         {
             var dialog = new FolderBrowserDialog();
+            dialog.RootFolder = Environment.SpecialFolder.Desktop;
             DialogResult result = dialog.ShowDialog();
-            backupTextbox.Text = dialog.SelectedPath;
+            BackupTextbox.Text = dialog.SelectedPath;
+            if (BackupTextbox.Text != null)
+            {
+                Settings.Default.BackupLocation = BackupTextbox.Text;
+                Settings.Default.Save();
+            }
         }
 
         private void SaveTextbox_Click(object sender, MouseButtonEventArgs e)
         {
             var dialog = new FolderBrowserDialog();
+            dialog.RootFolder = Environment.SpecialFolder.Desktop;
             DialogResult result = dialog.ShowDialog();
-            saveTextbox.Text = dialog.SelectedPath;
+            SaveTextbox.Text = dialog.SelectedPath;
+            if (SaveTextbox.Text != null)
+            {
+                Settings.Default.SaveLocation = SaveTextbox.Text;
+                Settings.Default.Save();
+            }
+        }
+
+        private void OnEventSaves_OnClick(object sender, RoutedEventArgs e)
+        {
+            IntervalSlider.IsEnabled = OnEventSaves.IsChecked != true;
+            IntervalTextbox.IsEnabled = OnEventSaves.IsChecked != true;
+            Settings.Default.EnableOnEventBackup = OnEventSaves.IsChecked == true;
+            Settings.Default.Save();
+        }
+
+        private void IntervalSlider_OnValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            Settings.Default.SaveInterval = (int) IntervalSlider.Value;
+            Settings.Default.Save();
+        }
+
+        private void BackupKeepSlider_OnValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            Settings.Default.KeepBackupNumber = (int) BackupKeepSlider.Value;
+            Settings.Default.Save();
+        }
+
+        private void OpenSaveButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            var saveLocation = "";
+            if (!string.IsNullOrEmpty(SaveTextbox.Text))
+            {
+                saveLocation = SaveTextbox.Text;
+            }
+            else if (!string.IsNullOrEmpty(Settings.Default.SaveLocation))
+            {
+                saveLocation = Settings.Default.SaveLocation;
+            }
+
+            if (Directory.Exists(saveLocation))
+            {
+                System.Diagnostics.Process.Start(saveLocation);
+            }
+            else
+            {
+                
+            }
+        }
+
+        private void OpenBackupButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            
+            var backupLocationEmpty = "";
+            if (!string.IsNullOrEmpty(SaveTextbox.Text))
+            {
+                backupLocationEmpty = BackupTextbox.Text;
+            }
+            else if (!string.IsNullOrEmpty(Settings.Default.BackupLocation))
+            {
+                backupLocationEmpty = Settings.Default.BackupLocation;
+            }
+
+            if (Directory.Exists(backupLocationEmpty))
+            {
+                System.Diagnostics.Process.Start(backupLocationEmpty);
+            }
+            else
+            {
+                
+            }
         }
     }
 }
