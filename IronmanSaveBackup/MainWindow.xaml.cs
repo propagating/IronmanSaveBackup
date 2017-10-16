@@ -90,47 +90,52 @@ namespace IronmanSaveBackup
 
         private void OpenSaveButton_OnClick(object sender, RoutedEventArgs e)
         {
-            var saveLocation = "";
             if (!string.IsNullOrEmpty(SaveTextbox.Text))
             {
-                saveLocation = SaveTextbox.Text;
+                FolderOperations.OpenFolder(SaveTextbox.Text);
             }
             else if (!string.IsNullOrEmpty(Settings.Default.SaveLocation))
             {
-                saveLocation = Settings.Default.SaveLocation;
-            }
-
-            if (Directory.Exists(saveLocation))
-            {
-                System.Diagnostics.Process.Start(saveLocation);
+                FolderOperations.OpenFolder(Settings.Default.SaveLocation);
             }
             else
             {
-                
+                MessageOperations.UserMessage(MessageOperations.MessageTypeEnum.DoesNotExistError);
             }
         }
 
         private void OpenBackupButton_OnClick(object sender, RoutedEventArgs e)
         {
-            
-            var backupLocationEmpty = "";
-            if (!string.IsNullOrEmpty(SaveTextbox.Text))
+            if (!string.IsNullOrEmpty(BackupTextbox.Text))
             {
-                backupLocationEmpty = BackupTextbox.Text;
+                FolderOperations.OpenFolder(BackupTextbox.Text);
             }
             else if (!string.IsNullOrEmpty(Settings.Default.BackupLocation))
             {
-                backupLocationEmpty = Settings.Default.BackupLocation;
-            }
-
-            if (Directory.Exists(backupLocationEmpty))
-            {
-                System.Diagnostics.Process.Start(backupLocationEmpty);
+                FolderOperations.OpenFolder(Settings.Default.BackupLocation);
             }
             else
             {
-                
+                MessageOperations.UserMessage(MessageOperations.MessageTypeEnum.DoesNotExistError);
             }
+        }
+
+        private void DeleteBackupButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            if (MessageOperations.ConfirmChoice(MessageOperations.MessageTypeEnum.DeleteChoice))
+            {
+                //TODO: Grab all baackups in folder and delete them
+            }
+
+        }
+
+        private void RestoreBackupText_OnPreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            var dialog = new OpenFileDialog();
+            dialog.Filter = @"Backup Files (*.isb)|*.isb|All Files (*.*)|*.*";
+            dialog.InitialDirectory = Settings.Default.BackupLocation;
+            DialogResult result = dialog.ShowDialog();
+            RestoreBackupText.Text = dialog.FileName;
         }
     }
 }

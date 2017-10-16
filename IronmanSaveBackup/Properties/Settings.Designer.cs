@@ -49,7 +49,7 @@ namespace IronmanSaveBackup.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("300")]
+        [global::System.Configuration.DefaultSettingValueAttribute("5")]
         public int SaveInterval {
             get {
                 return ((int)(this["SaveInterval"]));
@@ -80,6 +80,30 @@ namespace IronmanSaveBackup.Properties {
             }
             set {
                 this["KeepBackupNumber"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int MostRecentCampaign {
+            get {
+                return ((int)(this["MostRecentCampaign"]));
+            }
+            set {
+                this["MostRecentCampaign"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int MostRecentVersion {
+            get {
+                return ((int)(this["MostRecentVersion"]));
+            }
+            set {
+                this["MostRecentVersion"] = value;
             }
         }
     }

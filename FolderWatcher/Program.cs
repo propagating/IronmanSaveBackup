@@ -9,7 +9,8 @@ namespace FolderWatcher
 {
     class Program
     {
-        /*This is a diagnostic program to grab all of the file system events that take place during an Iron Man Save
+        /*
+            This is a diagnostic program to grab all of the file system events that take place during an Iron Man Save
                   
             The events that take place during each save in XCOM 2 are as follows:
         
@@ -26,11 +27,9 @@ namespace FolderWatcher
             Some other things to note: 
             A save event is kicked off when you press the 'Load' button while in Ironman.
             A save event may occur if you see a pod, even if it's not activated.
-            Some save events can occur while your a is moving/dying/really doing anything -- this is one of the areas that I could imagine leading to save corruption at the end of a mission
+            Some save events can occur while your actor is moving/dying/really doing anything -- this is one of the areas that I could imagine leading to save corruption at the end of a mission
             A save event seems to occur each time an objective is completed
-            Saves on the avenger appear to have the same steps as the saves during a mission, though they are kicked off in somewhat weird times
-            
-
+            Saves on the avenger appear to have the same steps as the saves during a mission, though they are kicked off in somewhat weird time
         */
         static void Main(string[] args)
         {
@@ -40,7 +39,7 @@ namespace FolderWatcher
             {
                 watcher.Path = filePath;
                 watcher.NotifyFilter = NotifyFilters.CreationTime | NotifyFilters.FileName | NotifyFilters.LastAccess |
-                                       NotifyFilters.LastWrite | NotifyFilters.Attributes | NotifyFilters.Size;
+                                       NotifyFilters.LastWrite | NotifyFilters.Attributes | NotifyFilters.Size | NotifyFilters.LastWrite;
 
                 //TODO: Update to the naming scheme of your ironman saves. 
                 watcher.Filter = "save_IRONMAN*";

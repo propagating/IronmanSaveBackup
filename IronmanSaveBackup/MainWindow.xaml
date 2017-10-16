@@ -18,22 +18,21 @@
         <Button x:Name="ForceBackupButton" Content="Force Backup" HorizontalAlignment="Left" Margin="240,210,0,0" VerticalAlignment="Top" Width="100"/>
         <Button x:Name="OpenSaveButton" Content="Open Save Directory" Click="OpenSaveButton_OnClick"  HorizontalAlignment="Left" VerticalAlignment="Top" Width="150" Margin="30,260,0,0"/>
         <Button x:Name="OpenBackupButton" Content="Open Backup Directory" Click="OpenBackupButton_OnClick" HorizontalAlignment="Left" VerticalAlignment="Top" Width="150" Margin="190,260,0,0"/>
-        <Button x:Name="DeleteBackupButton" Content="Delete All Backups" HorizontalAlignment="Left" Background="PaleVioletRed" VerticalAlignment="Top" Width="180" Margin="30,310,0,0"/>
+        <Button x:Name="DeleteBackupButton" Click="DeleteBackupButton_OnClick" Content="Delete All Backups" HorizontalAlignment="Left" Background="Red" Foreground="Black" VerticalAlignment="Top" Width="180" Margin="30,310,0,0"/>
         <Button x:Name="RestoreBackupButton" Content="Restore Selected Backup" HorizontalAlignment="Left" Margin="345,210,0,0" VerticalAlignment="Top" Width="150"/>
 
-        <TextBox x:Name="SaveTextbox" HorizontalAlignment="Left" PreviewMouseLeftButtonDown="SaveTextbox_Click" ToolTip="This is usually found in My Documents/My Games/XCOM2/XComGame/SaveData. For WOTC the folder name is XCOM2 War of the Chosen." Height="25" Margin="246,14,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="300"/>
+        <TextBox x:Name="SaveTextbox" HorizontalAlignment="Left"  PreviewMouseLeftButtonDown="SaveTextbox_Click" ToolTip="This is usually found in My Documents/My Games/XCOM2/XComGame/SaveData. For WOTC the folder name is XCOM2 War of the Chosen." Height="25" Margin="246,14,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="300"/>
         <TextBox x:Name="BackupTextbox" HorizontalAlignment="Left" PreviewMouseLeftButtonUp="BackupTextbox_Click" Height="25" TextWrapping="Wrap"  Text="" VerticalAlignment="Top" Width="300" Margin="246,51,0,0"/>
-
-        <ComboBox x:Name="RestoreBackupCombo" HorizontalAlignment="Left" Margin="246,162,0,0" VerticalAlignment="Top" Width="300"/>
+        <TextBox x:Name="RestoreBackupText" HorizontalAlignment="Left" PreviewMouseLeftButtonDown="RestoreBackupText_OnPreviewMouseLeftButtonDown" Margin="246,162,0,0" VerticalAlignment="Top" Width="300"/>
 
         <CheckBox x:Name="OnEventSaves" Content="Enable Event Driven Saves" Click="OnEventSaves_OnClick" ToolTip="Instead of backups occuring on an interval, a backup occurs every time the save file changes." HorizontalAlignment="Left" Margin="350,265,0,0" VerticalAlignment="Top" Width="175"/>
 
 
         <TextBox x:Name="IntervalTextbox" HorizontalAlignment="Left" Height="25" TextWrapping="Wrap"  Text="{Binding ElementName=IntervalSlider, Path=Value,UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="70" Margin="476,91,0,0"/>
-        <Slider x:Name="IntervalSlider" Minimum="1" Maximum="60" Value="10" TickFrequency="1" ValueChanged="IntervalSlider_OnValueChanged" IsSnapToTickEnabled="True"  IsMoveToPointEnabled="True" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="246,91,0,0" Width="200"/>
+        <Slider x:Name="IntervalSlider" Minimum="0" Maximum="60" TickFrequency="1" ValueChanged="IntervalSlider_OnValueChanged" IsSnapToTickEnabled="True"  IsMoveToPointEnabled="True" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="246,91,0,0" Width="200"/>
 
         <TextBox x:Name="BackupKeepTextbox" HorizontalAlignment="Left" Height="25" TextWrapping="Wrap" Text="{Binding ElementName=BackupKeepSlider, Path=Value, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="70" Margin="476,123,0,0"/>
-        <Slider x:Name="BackupKeepSlider" ToolTip="Select 0 to keep all backups. When the limit is reached the oldest backup will be deleted." Minimum="0" Maximum="20" Value="10" TickFrequency="1" ValueChanged="BackupKeepSlider_OnValueChanged"  IsSnapToTickEnabled="True" IsMoveToPointEnabled="True"  HorizontalAlignment="Left" VerticalAlignment="Top" Margin="246,127,0,0" Width="200"/>
+        <Slider x:Name="BackupKeepSlider" ToolTip="Select 0 to keep all backups. When the limit is reached the oldest backup will be deleted." Minimum="0" Maximum="20" TickFrequency="1" ValueChanged="BackupKeepSlider_OnValueChanged"  IsSnapToTickEnabled="True" IsMoveToPointEnabled="True"  HorizontalAlignment="Left" VerticalAlignment="Top" Margin="246,127,0,0" Width="200"/>
         
         
 
