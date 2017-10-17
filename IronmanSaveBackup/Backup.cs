@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Security.RightsManagement;
@@ -32,7 +33,14 @@ namespace IronmanSaveBackup
 
         public void RestoreBackup(string filePath)
         {
-            
+            if (File.Exists(filePath))
+            {
+
+            }
+            else
+            {
+                MessageOperations.UserMessage(MessageOperations.MessageTypeEnum.DoesNotExistError);
+            }
         }
     }
 }

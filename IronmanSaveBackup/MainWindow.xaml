@@ -19,7 +19,7 @@
         <Button x:Name="OpenSaveButton" Content="Open Save Directory" Click="OpenSaveButton_OnClick"  HorizontalAlignment="Left" VerticalAlignment="Top" Width="150" Margin="30,260,0,0"/>
         <Button x:Name="OpenBackupButton" Content="Open Backup Directory" Click="OpenBackupButton_OnClick" HorizontalAlignment="Left" VerticalAlignment="Top" Width="150" Margin="190,260,0,0"/>
         <Button x:Name="DeleteBackupButton" Click="DeleteBackupButton_OnClick" Content="Delete All Backups" HorizontalAlignment="Left" Background="Red" Foreground="Black" VerticalAlignment="Top" Width="180" Margin="30,310,0,0"/>
-        <Button x:Name="RestoreBackupButton" Content="Restore Selected Backup" HorizontalAlignment="Left" Margin="345,210,0,0" VerticalAlignment="Top" Width="150"/>
+        <Button x:Name="RestoreBackupButton" Content="Restore Selected Backup" Click="RestoreBackupButton_OnClick"  HorizontalAlignment="Left" Margin="345,210,0,0" VerticalAlignment="Top" Width="150"/>
 
         <TextBox x:Name="SaveTextbox" HorizontalAlignment="Left"  PreviewMouseLeftButtonDown="SaveTextbox_Click" ToolTip="This is usually found in My Documents/My Games/XCOM2/XComGame/SaveData. For WOTC the folder name is XCOM2 War of the Chosen." Height="25" Margin="246,14,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="300"/>
         <TextBox x:Name="BackupTextbox" HorizontalAlignment="Left" PreviewMouseLeftButtonUp="BackupTextbox_Click" Height="25" TextWrapping="Wrap"  Text="" VerticalAlignment="Top" Width="300" Margin="246,51,0,0"/>

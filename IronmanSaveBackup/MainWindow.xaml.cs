@@ -94,10 +94,6 @@ namespace IronmanSaveBackup
             {
                 FolderOperations.OpenFolder(SaveTextbox.Text);
             }
-            else if (!string.IsNullOrEmpty(Settings.Default.SaveLocation))
-            {
-                FolderOperations.OpenFolder(Settings.Default.SaveLocation);
-            }
             else
             {
                 MessageOperations.UserMessage(MessageOperations.MessageTypeEnum.DoesNotExistError);
@@ -110,10 +106,6 @@ namespace IronmanSaveBackup
             {
                 FolderOperations.OpenFolder(BackupTextbox.Text);
             }
-            else if (!string.IsNullOrEmpty(Settings.Default.BackupLocation))
-            {
-                FolderOperations.OpenFolder(Settings.Default.BackupLocation);
-            }
             else
             {
                 MessageOperations.UserMessage(MessageOperations.MessageTypeEnum.DoesNotExistError);
@@ -122,10 +114,41 @@ namespace IronmanSaveBackup
 
         private void DeleteBackupButton_OnClick(object sender, RoutedEventArgs e)
         {
-            if (MessageOperations.ConfirmChoice(MessageOperations.MessageTypeEnum.DeleteChoice))
+
+            if (!string.IsNullOrEmpty(BackupTextbox.Text))
             {
-                //TODO: Grab all baackups in folder and delete them
+                if (MessageOperations.ConfirmChoice(MessageOperations.MessageTypeEnum.DeleteChoice))
+                {
+
+                    var backupList = Directory.GetFiles(BackupTextbox.Text, "*.isb", SearchOption.AllDirectories);
+                    foreach (var backup in backupList)
+                    {
+                        try
+                        {
+                            File.Delete(backup);
+                        }
+                        catch (ArgumentNullException exception)
+                        {
+                            MessageOperations.UserMessage(MessageOperations.MessageTypeEnum.DoesNotExistError);
+                        }
+                        catch (ArgumentException exception)
+                        {
+                            MessageOperations.UserMessage(MessageOperations.MessageTypeEnum.InvalidPathError);
+                        }
+                        catch (Exception exception)
+                        {
+                            MessageOperations.UserMessage(MessageOperations.MessageTypeEnum.GenericError);
+                        }
+
+                    }
+                    //TODO: Grab all baackups in folder and delete them
+                }
             }
+            else
+            {
+                MessageOperations.UserMessage(MessageOperations.MessageTypeEnum.DoesNotExistError);
+            }
+
 
         }
 
@@ -136,6 +159,16 @@ namespace IronmanSaveBackup
             dialog.InitialDirectory = Settings.Default.BackupLocation;
             DialogResult result = dialog.ShowDialog();
             RestoreBackupText.Text = dialog.FileName;
+        }
+
+        private void RestoreBackupButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            if (MessageOperations.ConfirmChoice(MessageOperations.MessageTypeEnum.ReplaceChoice))
+            {
+                var backup = new Backup();
+                backup.RestoreBackup(RestoreBackupText.Text);
+                //TODO: Restore Backup
+            }
         }
     }
 }
