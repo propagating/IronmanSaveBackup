@@ -19,12 +19,12 @@ namespace IronmanSaveBackup
                 //Delete backups
                 case MessageTypeEnum.DeleteChoice:
                     message =
-                        @"Choosing 'Yes' will DELETE ALL BACKUPS in your selected backups folder.";
+                        @"Choosing 'Yes' will DELETE ALL BACKUPS in your backups folder. This is NOT reversible.";
                     caption = "Delete All Backups?";
                     break;
                     case MessageTypeEnum.ReplaceChoice:
                         message =
-                            @"Choosing 'Yes' will replace the existing Ironman Save for this campaign. It cannot be recovered.";
+                            @"Choosing 'Yes' will replace the existing Ironman Save for this campaign. Please ensure you have a backup of your current save prior to recovery.";
                         caption = "Restore Backup?";
                         break;
                 default:
@@ -34,7 +34,7 @@ namespace IronmanSaveBackup
             }
 
             MessageBoxButtons buttons = MessageBoxButtons.YesNoCancel;
-            DialogResult result = System.Windows.Forms.MessageBox.Show(message, caption, buttons);
+            DialogResult result = MessageBox.Show(message, caption, buttons);
 
             if (result == DialogResult.Yes)
             {
@@ -52,22 +52,47 @@ namespace IronmanSaveBackup
                 //Delete backups
                 case MessageTypeEnum.DoesNotExistError:
                     message =
-                        "The item you selected does not exist and/or there is no value set.";
+                        "The target file does not exist, the operation could not be completed.";
                     caption = "No File/Folder Selected";
                     break;
                 case MessageTypeEnum.InvalidPathError:
                     message =
-                        "The item you selected does not exist and/or there is no value set.";
+                        "The filepath selected is invalid, inaccessible, or does not exist.";
                     caption = "No File/Folder Selected";
+                    break;
+                case MessageTypeEnum.FileInUseError:
+                    message =
+                        "The Save File is in use by another process (probably XCOM2). The operation cannot be completed.";
+                    caption = "File In Use Error";
+                    break;
+                case MessageTypeEnum.BackupError:
+                    message =
+                        "The Backup operation could not be completed.";
+                    caption = "Backup Error";
                     break;
                 case MessageTypeEnum.GenericError:
                     message =
                         "Uncaught exception occurred.";
                     caption = "Something Went Wrong";
                     break;
+                case MessageTypeEnum.RestoreSuccess:
+                    message =
+                        "Backup succesfully restored.";
+                    caption = "Backup Restoration Successful";
+                    break;
+                case MessageTypeEnum.BackupSuccess:
+                    message =
+                        "Backup succesfully created.";
+                    caption = "Backup Creation Succesful";
+                    break;
+                case MessageTypeEnum.DeleteSuccess:
+                    message =
+                        "All backups succesfully deleted.";
+                    caption = "Backup Deletion Successful";
+                    break;
                 default:
-                    message = "Are you sure you want to close this message box?";
-                    caption = "Something Happened";
+                    message = "You shouldn't be here. You should close this message box and submit an issue on Github.";
+                    caption = "Something Weird Happened";
                     break;
 
             }
@@ -78,13 +103,17 @@ namespace IronmanSaveBackup
 
         public enum MessageTypeEnum
         {
-            GenericError = 0,
-            DoesNotExistError = 1,
-            InvalidChoiceError = 2,
-            InvalidPathError = 3,
-            DeleteChoice = 10,
-            ReplaceChoice = 11,
-
+            GenericError,
+            DoesNotExistError,
+            InvalidChoiceError,
+            InvalidPathError,
+            DeleteChoice,
+            ReplaceChoice,
+            FileInUseError,
+            RestoreSuccess,
+            BackupError,
+            BackupSuccess,
+            DeleteSuccess
         }
     }
 

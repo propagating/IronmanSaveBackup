@@ -18,10 +18,7 @@
       <Value Profile="(Default)">10</Value>
     </Setting>
     <Setting Name="MostRecentCampaign" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">0</Value>
-    </Setting>
-    <Setting Name="MostRecentVersion" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">0</Value>
+      <Value Profile="(Default)">1</Value>
     </Setting>
   </Settings>
 </SettingsFile>

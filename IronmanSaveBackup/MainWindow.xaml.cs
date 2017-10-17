@@ -23,8 +23,6 @@ namespace IronmanSaveBackup
     /// </summary>
     public partial class MainWindow : Window
     {
-        public const string xcom2RegexFind= @"(^save_IRONMAN_Campaign_.*$)";
-        public const string xcom2RegexCampaign = @"^save_IRONMAN_Campaign_(.*)$"; //Match[0] for save
         public MainWindow()
         {
             InitializeComponent();
@@ -137,11 +135,12 @@ namespace IronmanSaveBackup
                         }
                         catch (Exception exception)
                         {
-                            MessageOperations.UserMessage(MessageOperations.MessageTypeEnum.GenericError);
+                            MessageOperations.UserMessage();
                         }
 
                     }
-                    //TODO: Grab all baackups in folder and delete them
+
+                    MessageOperations.UserMessage(MessageOperations.MessageTypeEnum.DeleteSuccess);
                 }
             }
             else
@@ -163,11 +162,39 @@ namespace IronmanSaveBackup
 
         private void RestoreBackupButton_OnClick(object sender, RoutedEventArgs e)
         {
-            if (MessageOperations.ConfirmChoice(MessageOperations.MessageTypeEnum.ReplaceChoice))
+            if (File.Exists(RestoreBackupText.Text))
+            {
+                if (MessageOperations.ConfirmChoice(MessageOperations.MessageTypeEnum.ReplaceChoice))
+                {
+                    var backup = new Backup
+                    {
+                        SaveLocation = SaveTextbox.Text,
+                        BackupLocation = BackupTextbox.Text,
+                        Campaign = Int32.Parse(Directory.GetParent(RestoreBackupText.Text).Name)
+                    };
+                    backup.RestoreName = backup.BuildRestoreName(backup.Campaign);
+                    backup.RestoreBackup(RestoreBackupText.Text, backup.RestoreName);
+                    //TODO: Restore Backup
+                }
+            }
+            else
+            {
+                MessageOperations.UserMessage(MessageOperations.MessageTypeEnum.InvalidPathError);
+            }
+
+        }
+
+        private void ForceBackupButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            if (!string.IsNullOrEmpty(BackupTextbox.Text) && !string.IsNullOrEmpty(SaveTextbox.Text))
             {
                 var backup = new Backup();
-                backup.RestoreBackup(RestoreBackupText.Text);
-                //TODO: Restore Backup
+                var latestBackup = backup.CreateBackup(SaveTextbox.Text, BackupTextbox.Text);
+                MostRecentBackup.Content = latestBackup;
+            }
+            else
+            {
+                MessageOperations.UserMessage(MessageOperations.MessageTypeEnum.DoesNotExistError);
             }
         }
     }
