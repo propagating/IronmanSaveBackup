@@ -65,6 +65,11 @@ namespace IronmanSaveBackup
                         "The Save File is in use by another process (probably XCOM2). The operation cannot be completed.";
                     caption = "File In Use Error";
                     break;
+                case MessageTypeEnum.IronmanSaveNotFoundError:
+                    message =
+                        "The Backup operation could not be completed. No Ironman Saves found.";
+                    caption = "Backup Error";
+                    break;
                 case MessageTypeEnum.BackupError:
                     message =
                         "The Backup operation could not be completed.";
@@ -90,8 +95,14 @@ namespace IronmanSaveBackup
                         "All backups succesfully deleted.";
                     caption = "Backup Deletion Successful";
                     break;
+                case MessageTypeEnum.InvalidChoiceError:
+                    break;
+                case MessageTypeEnum.DeleteChoice:
+                    break;
+                case MessageTypeEnum.ReplaceChoice:
+                    break;
                 default:
-                    message = "You shouldn't be here. You should close this message box and submit an issue on Github.";
+                    message = "You shouldn't be here. You should close this message box and submit an issue on Github. Include what you did to get here.";
                     caption = "Something Weird Happened";
                     break;
 
@@ -113,7 +124,8 @@ namespace IronmanSaveBackup
             RestoreSuccess,
             BackupError,
             BackupSuccess,
-            DeleteSuccess
+            DeleteSuccess,
+            IronmanSaveNotFoundError
         }
     }
 

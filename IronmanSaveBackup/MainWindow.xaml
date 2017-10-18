@@ -15,8 +15,8 @@
         <Label x:Name="MostRecentBackup" x:FieldModifier="public" Content="N/A" IsEnabled="False" HorizontalContentAlignment="Center"  HorizontalAlignment="Left" Margin="320,335,0,0" VerticalAlignment='Top' Width="250"/>
         <Label x:Name="MostRecentLabel" Content="Most Recent Backup" HorizontalAlignment="Left" Margin="30,335,0,0" VerticalAlignment="Top" Width="150"/>
 
-        <Button x:Name="StartButton" Content="Start Backup" IsEnabled="False" HorizontalAlignment="Left" VerticalAlignment="Top" Width="100" Margin="30,210,0,0"/>
-        <Button x:Name="StopButton" Content="Stop Backup" IsEnabled="False" HorizontalAlignment="Left" VerticalAlignment="Top" Width="100" Margin="135,210,0,0"/>
+        <Button x:Name="StartButton" Content="Start Backup" Click="StartButton_OnClick" IsEnabled="False" HorizontalAlignment="Left" VerticalAlignment="Top" Width="100" Margin="30,210,0,0"/>
+        <Button x:Name="StopButton" Content="Stop Backup" Click="StopButton_OnClick" IsEnabled="False" HorizontalAlignment="Left" VerticalAlignment="Top" Width="100" Margin="135,210,0,0"/>
         
         <Button x:Name="ForceBackupButton" Content="Force Backup" Click="ForceBackupButton_OnClick" HorizontalAlignment="Left" Margin="240,210,0,0" VerticalAlignment="Top" Width="100"/>
         <Button x:Name="OpenSaveButton" Content="Open Save Directory" Click="OpenSaveButton_OnClick"  HorizontalAlignment="Left" VerticalAlignment="Top" Width="150" Margin="30,245,0,0"/>
@@ -31,10 +31,10 @@
         <CheckBox x:Name="OnEventSaves" Content="Enable Event Driven Saves" Click="OnEventSaves_OnClick" ToolTip="Instead of backups occuring on an interval, a backup occurs every time the save file changes." HorizontalAlignment="Left" Margin="350,245,0,0" VerticalAlignment="Top" Width="175"/>
 
 
-        <TextBox x:Name="IntervalTextbox" HorizontalAlignment="Left" Height="25" TextWrapping="Wrap"  Text="{Binding ElementName=IntervalSlider, Path=Value,UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="70" Margin="500,95,0,0"/>
+        <TextBox x:Name="IntervalTextbox" HorizontalAlignment="Left" Height="25" TextWrapping="Wrap"  Text="{Binding ElementName=IntervalSlider, Path=Value,UpdateSourceTrigger=PropertyChanged}" IsReadOnly="True" VerticalAlignment="Top" Width="70" Margin="500,95,0,0"/>
         <Slider x:Name="IntervalSlider" Minimum="0" Maximum="60" TickFrequency="1" ValueChanged="IntervalSlider_OnValueChanged" IsSnapToTickEnabled="True"  IsMoveToPointEnabled="True" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="270,95,0,0" Width="200"/>
 
-        <TextBox x:Name="BackupKeepTextbox" HorizontalAlignment="Left" Height="25" TextWrapping="Wrap" Text="{Binding ElementName=BackupKeepSlider, Path=Value, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="70" Margin="500,130,0,0"/>
+        <TextBox x:Name="BackupKeepTextbox" HorizontalAlignment="Left" Height="25" TextWrapping="Wrap" Text="{Binding ElementName=BackupKeepSlider, Path=Value, UpdateSourceTrigger=PropertyChanged}" IsReadOnly="True" VerticalAlignment="Top" Width="70" Margin="500,130,0,0"/>
         <Slider x:Name="BackupKeepSlider" ToolTip="Select 0 to keep all backups. When the limit is reached the oldest backup will be deleted." Minimum="0" Maximum="20" TickFrequency="1" ValueChanged="BackupKeepSlider_OnValueChanged"  IsSnapToTickEnabled="True" IsMoveToPointEnabled="True"  HorizontalAlignment="Left" VerticalAlignment="Top" Margin="270,130,0,0" Width="200"/>
 
 

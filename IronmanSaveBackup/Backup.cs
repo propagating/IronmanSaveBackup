@@ -45,21 +45,24 @@ namespace IronmanSaveBackup
             }
         }
 
-        public DateTime CreateBackup(string saveParent, string backupParent)
+        public DateTime CreateBackup(string saveParent, string backupParent, int maxBackups)
         {
+            //Grabs the most recently updated IronMan save in the save folder
             var regex = new Regex(@"(^save_IRONMAN- Campaign .*$)");
-            var directory = new DirectoryInfo(saveParent);
-            var files = directory.GetFiles().OrderByDescending(x => x.LastAccessTime).ToList();
+            var saveDirectoryInfo = new DirectoryInfo(saveParent);
+            var files = saveDirectoryInfo.GetFiles().OrderByDescending(x => x.LastAccessTime).ToList();
             var fileName = files.FirstOrDefault(x=> regex.IsMatch(Path.GetFileName(x.FullName)));
+
             if (fileName != null)
             {
                 var campaignId = GetCampaignFromFileName(fileName.Name);
                 if (campaignId == -1)
                 {
-                    MessageOperations.UserMessage(MessageOperations.MessageTypeEnum.BackupError);
+                    MessageOperations.UserMessage(MessageOperations.MessageTypeEnum.IronmanSaveNotFoundError);
                     return DateTime.MinValue;
                 }
 
+                //Create our backup directory and filenames
                 var backupFileName = BuildBackupName(campaignId);
                 var backupChildDirectory = BuildBackupLocation(backupParent, campaignId);
                 var backupFullName = backupChildDirectory + "\\" + backupFileName;
@@ -67,7 +70,10 @@ namespace IronmanSaveBackup
                 try
                 {
                     fileName.LastWriteTime = DateTime.Now;
-                    File.Copy(fileName.FullName, backupFullName,false);
+                    File.Copy(fileName.FullName, backupFullName, false);
+
+                    //Only delete additional backups if the new backup was copied sucesfully
+                    DeleteAdditionalBackups(maxBackups, backupChildDirectory);
                     MessageOperations.UserMessage(MessageOperations.MessageTypeEnum.BackupSuccess);
                     return DateTime.Now;
                 }
@@ -77,15 +83,22 @@ namespace IronmanSaveBackup
                     return DateTime.MinValue;
                 }
             }
-            else
-            {
-                MessageOperations.UserMessage(MessageOperations.MessageTypeEnum.DoesNotExistError);
-                return DateTime.MinValue;
-            }
-
+            MessageOperations.UserMessage(MessageOperations.MessageTypeEnum.DoesNotExistError);
+            return DateTime.MinValue;
         }
 
-        private int GetCampaignFromFileName(string fileName)
+        private static void DeleteAdditionalBackups(int maxBackups, string backupChildDirectory)
+        {
+            var backupChildInfo = new DirectoryInfo(backupChildDirectory);
+            var backupFiles = backupChildInfo.GetFiles().OrderBy(x => x.CreationTime);
+
+            while (backupFiles.Count() > maxBackups && maxBackups > 0)
+            {
+                    File.Delete(backupFiles.FirstOrDefault().FullName);
+            }
+        }
+
+        private static int GetCampaignFromFileName(string fileName)
         {
             var regex = new Regex(@"^save_IRONMAN- Campaign (.*)$");
             var match = regex.Match(fileName);
@@ -107,20 +120,31 @@ namespace IronmanSaveBackup
             return $@"save_IRONMAN- Campaign {campaign}";
         }
 
-        public string BuildBackupLocation(string backuplocation, int campaign)
+        private static string BuildBackupLocation(string backuplocation, int campaign)
         {
             var childDirectory = backuplocation + "\\" + campaign + "\\";
+
             if (!Directory.Exists(childDirectory))
             {
                 Directory.CreateDirectory(childDirectory);
             }
+
             return childDirectory;
         }
 
-        public string BuildBackupName(int campaign)
+        private static string BuildBackupName(int campaign)
         {
             var date = DateTime.UtcNow;
             return $@"save_IRONMAN-Campaign {campaign} - {date.Ticks}.isb";
+        }
+
+        public DateTime StartBackup(bool isChecked, double intervalSliderValue, double value)
+        {
+            return DateTime.Now;
+            if (!isChecked)
+            {
+                
+            }
         }
     }
 }

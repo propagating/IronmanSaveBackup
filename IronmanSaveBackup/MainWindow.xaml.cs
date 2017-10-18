@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -23,21 +24,23 @@ namespace IronmanSaveBackup
     /// </summary>
     public partial class MainWindow : Window
     {
+        Backup runningBackup = new Backup();
         public MainWindow()
         {
             InitializeComponent();
+
             OnEventSaves.IsChecked = Settings.Default.EnableOnEventBackup;
             BackupTextbox.Text = Settings.Default.BackupLocation;
             SaveTextbox.Text = Settings.Default.SaveLocation;
             IntervalSlider.Value = Settings.Default.SaveInterval;
             BackupKeepSlider.Value = Settings.Default.KeepBackupNumber;
-            if (OnEventSaves.IsChecked == true)
-            {
-                IntervalSlider.IsEnabled = false;
-                IntervalTextbox.IsEnabled = false;
-            }
+            MostRecentBackup.Content = Settings.Default.MostRecentCampaign;
 
+            runningBackup.BackupActive = false;
 
+            if (OnEventSaves.IsChecked != true) return;
+            IntervalSlider.IsEnabled = false;
+            IntervalTextbox.IsEnabled = false;
         }
 
         private void BackupTextbox_Click(object sender, MouseButtonEventArgs e)
@@ -174,7 +177,6 @@ namespace IronmanSaveBackup
                     };
                     backup.RestoreName = backup.BuildRestoreName(backup.Campaign);
                     backup.RestoreBackup(RestoreBackupText.Text, backup.RestoreName);
-                    //TODO: Restore Backup
                 }
             }
             else
@@ -189,13 +191,30 @@ namespace IronmanSaveBackup
             if (!string.IsNullOrEmpty(BackupTextbox.Text) && !string.IsNullOrEmpty(SaveTextbox.Text))
             {
                 var backup = new Backup();
-                var latestBackup = backup.CreateBackup(SaveTextbox.Text, BackupTextbox.Text);
-                MostRecentBackup.Content = latestBackup;
+                var lastUpdated = backup.CreateBackup(SaveTextbox.Text, BackupTextbox.Text, (int) BackupKeepSlider.Value);
+                if (lastUpdated == DateTime.MinValue)
+                {
+                    MostRecentBackup.Content = "No Save Found for Backup";
+                }
+                MostRecentBackup.Content = $"Campaign {Settings.Default.MostRecentCampaign} @ {lastUpdated}";
             }
             else
             {
                 MessageOperations.UserMessage(MessageOperations.MessageTypeEnum.DoesNotExistError);
             }
+        }
+
+        private void StartButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            var lastUpdated = runningBackup.StartBackup((bool) OnEventSaves.IsChecked, IntervalSlider.Value, BackupKeepSlider.Value);
+            MostRecentBackup.Content = $"Campaign {Settings.Default.MostRecentCampaign} @ {lastUpdated}";
+            //TODO: Add backup process, send in the Event Driven Flag, Max Backups, and Interval
+        }
+
+        private void StopButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            runningBackup.BackupActive = false;
+            //TODO: Send In a Cancel process
         }
     }
 }
