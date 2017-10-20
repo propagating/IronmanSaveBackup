@@ -21,6 +21,7 @@ namespace IronmanSaveBackup
         public int Campaign { get; set; }
         public string RestoreName { get; set; }
         public bool BackupActive { get; set; }
+        public DateTime LastUpdated { get; set; }
         public Backup()
         {
             this.BackupLocation = BuildBackupLocation(Settings.Default.BackupLocation,
@@ -29,6 +30,7 @@ namespace IronmanSaveBackup
             this.BackupName = $@"save_IRONMAN- Campaign {Campaign}-.isb";
             this.RestoreName = BuildRestoreName(this.Campaign);
             this.BackupActive = false;
+            LastUpdated = DateTime.Now;
         }
 
         public void RestoreBackup(string filePath, string restoreName)
@@ -62,6 +64,9 @@ namespace IronmanSaveBackup
                     return DateTime.MinValue;
                 }
 
+                Settings.Default.MostRecentCampaign = campaignId;
+                Settings.Default.Save();
+
                 //Create our backup directory and filenames
                 var backupFileName = BuildBackupName(campaignId);
                 var backupChildDirectory = BuildBackupLocation(backupParent, campaignId);
@@ -73,11 +78,11 @@ namespace IronmanSaveBackup
                     File.Copy(fileName.FullName, backupFullName, false);
 
                     //Only delete additional backups if the new backup was copied sucesfully
-                    DeleteAdditionalBackups(maxBackups, backupChildDirectory);
+                    if(maxBackups > 0) { DeleteAdditionalBackups(maxBackups, backupChildDirectory);}
                     MessageOperations.UserMessage(MessageOperations.MessageTypeEnum.BackupSuccess);
                     return DateTime.Now;
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     MessageOperations.UserMessage(MessageOperations.MessageTypeEnum.FileInUseError);
                     return DateTime.MinValue;
@@ -90,12 +95,16 @@ namespace IronmanSaveBackup
         private static void DeleteAdditionalBackups(int maxBackups, string backupChildDirectory)
         {
             var backupChildInfo = new DirectoryInfo(backupChildDirectory);
-            var backupFiles = backupChildInfo.GetFiles().OrderBy(x => x.CreationTime);
-
-            while (backupFiles.Count() > maxBackups && maxBackups > 0)
+            var backupFiles = backupChildInfo.GetFiles().OrderBy(x => x.CreationTime).ToList();
+            var numToDelete = backupFiles.Count() - maxBackups;
+            if (numToDelete > 0)
             {
-                    File.Delete(backupFiles.FirstOrDefault().FullName);
+                foreach (var file in backupFiles.Take(numToDelete).ToList())
+                {
+                    File.Delete(file.FullName);
+                }
             }
+
         }
 
         private static int GetCampaignFromFileName(string fileName)
@@ -106,8 +115,6 @@ namespace IronmanSaveBackup
             int idValue;
             if (int.TryParse(idString, out idValue))
             {
-                Settings.Default.MostRecentCampaign = idValue;
-                Settings.Default.Save();
                 return idValue;
             }
             return -1;
@@ -138,12 +145,14 @@ namespace IronmanSaveBackup
             return $@"save_IRONMAN-Campaign {campaign} - {date.Ticks}.isb";
         }
 
-        public DateTime StartBackup(bool isChecked, double intervalSliderValue, double value)
+        public void StartBackup(bool isChecked, double intervalSliderValue, double value)
         {
-            return DateTime.Now;
             if (!isChecked)
             {
-                
+                while (this.BackupActive == true)
+                {
+                    
+                }
             }
         }
     }
