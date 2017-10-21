@@ -145,14 +145,19 @@ namespace IronmanSaveBackup
             return $@"save_IRONMAN-Campaign {campaign} - {date.Ticks}.isb";
         }
 
-        public void StartBackup(bool isChecked, double intervalSliderValue, double value)
+        public void StartBackup(bool eventDrivenEnabled, int backupInterval, int backupsToKeep)
         {
-            if (!isChecked)
+            if (!eventDrivenEnabled)
             {
-                while (this.BackupActive == true)
-                {
-                    
-                }
+                IntervalBackup(backupInterval, backupsToKeep);
+            }
+        }
+
+        private void IntervalBackup(double backupInterval, int backupsToKeep)
+        {
+            while (this.BackupActive)
+            {
+                
             }
         }
     }

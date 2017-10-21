@@ -155,7 +155,7 @@ namespace IronmanSaveBackup
                 Filter = @"Backup Files (*.isb)|*.isb|All Files (*.*)|*.*",
                 InitialDirectory = Settings.Default.BackupLocation
             };
-            DialogResult result = dialog.ShowDialog();
+            var result = dialog.ShowDialog();
             RestoreBackupText.Text = dialog.FileName;
         }
 
@@ -197,7 +197,7 @@ namespace IronmanSaveBackup
         private void StartButton_OnClick(object sender, RoutedEventArgs e)
         {
             runningBackup.BackupActive = true;
-            runningBackup.StartBackup((bool)OnEventSaves.IsChecked, IntervalSlider.Value, BackupKeepSlider.Value);
+            runningBackup.StartBackup((bool)OnEventSaves.IsChecked, (int) IntervalSlider.Value, (int) BackupKeepSlider.Value);
             runningBackup.LastUpdated = DateTime.Now;
             MostRecentBackup.Content = $"Campaign {Settings.Default.MostRecentCampaign} @ {runningBackup.LastUpdated}";
             StartButton.IsEnabled = false;
