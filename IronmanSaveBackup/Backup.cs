@@ -13,45 +13,43 @@ using IronmanSaveBackup.Properties;
 
 namespace IronmanSaveBackup
 {
-    class Backup
+    internal class Backup
     {
-        public string BackupName { get; set; }
-        public string BackupLocation { get; set; }
-        public string SaveLocation { get; set; }
+        public string BackupParentFolder { get; set; }
+        public string SaveParentFolder { get; set; }
+        public string RestoreFile { get; set; }
+        public int MaxBackups { get; set; }
+        public int BackupInterval { get; set; }
         public int Campaign { get; set; }
         public string RestoreName { get; set; }
         public bool BackupActive { get; set; }
+        public bool EventDrivenBackups { get; set; }
         public DateTime LastUpdated { get; set; }
-        public Backup()
-        {
-            this.BackupLocation = BuildBackupLocation(Settings.Default.BackupLocation,
-                Settings.Default.MostRecentCampaign);
-            this.SaveLocation = Settings.Default.SaveLocation;
-            this.BackupName = $@"save_IRONMAN- Campaign {Campaign}-.isb";
-            this.RestoreName = BuildRestoreName(this.Campaign);
-            this.BackupActive = false;
-            LastUpdated = DateTime.Now;
-        }
 
-        public void RestoreBackup(string filePath, string restoreName)
+        public void RestoreBackup()
         {
-            var restorePath = SaveLocation + "\\" + restoreName;
+            this.RestoreName = BuildRestoreName();
+            var restorePath = Path.Combine(this.SaveParentFolder, this.RestoreName);
+            if (this.Campaign == -1)
+            {
+                MessageOperations.UserMessage("Could not determine the Campaign that this backup belongs to.", MessageOperations.MessageTypeEnum.RestoreError);
+            }
             try
             {
-                File.Copy(filePath, restorePath, true);
-                MessageOperations.UserMessage(MessageOperations.MessageTypeEnum.RestoreSuccess);
+                File.Copy(this.RestoreFile, restorePath, true);
+                MessageOperations.UserMessage($"Succesfully restored saved for Campaign {this.Campaign}",MessageOperations.MessageTypeEnum.RestoreSuccess);
             }
             catch (IOException)
             {
-                MessageOperations.UserMessage(MessageOperations.MessageTypeEnum.FileInUseError);
+                MessageOperations.UserMessage("Could not restore the selected backup because the Ironman Save and/or the Backup Save is in use.", MessageOperations.MessageTypeEnum.FileInUseError);
             }
         }
 
-        public DateTime CreateBackup(string saveParent, string backupParent, int maxBackups)
+        public DateTime CreateBackup()
         {
             //Grabs the most recently updated IronMan save in the save folder
             var regex = new Regex(@"(^save_IRONMAN- Campaign .*$)");
-            var saveDirectoryInfo = new DirectoryInfo(saveParent);
+            var saveDirectoryInfo = new DirectoryInfo(this.SaveParentFolder);
             var files = saveDirectoryInfo.GetFiles().OrderByDescending(x => x.LastAccessTime).ToList();
             var fileName = files.FirstOrDefault(x=> regex.IsMatch(Path.GetFileName(x.FullName)));
 
@@ -60,17 +58,18 @@ namespace IronmanSaveBackup
                 var campaignId = GetCampaignFromFileName(fileName.Name);
                 if (campaignId == -1)
                 {
-                    MessageOperations.UserMessage(MessageOperations.MessageTypeEnum.IronmanSaveNotFoundError);
-                    return DateTime.MinValue;
+                    MessageOperations.UserMessage("Could not determine the Campaign for the Ironman Saves Found.",MessageOperations.MessageTypeEnum.BackupError);
+                    this.LastUpdated = DateTime.Now;
+                    return this.LastUpdated;
                 }
 
                 Settings.Default.MostRecentCampaign = campaignId;
                 Settings.Default.Save();
 
                 //Create our backup directory and filenames
-                var backupFileName = BuildBackupName(campaignId);
-                var backupChildDirectory = BuildBackupLocation(backupParent, campaignId);
-                var backupFullName = backupChildDirectory + "\\" + backupFileName;
+                var backupFileName = BuildBackupName();
+                var backupChildDirectory = BuildBackupLocation();
+                var backupFullName = Path.Combine(backupChildDirectory, backupFileName);
 
                 try
                 {
@@ -78,25 +77,28 @@ namespace IronmanSaveBackup
                     File.Copy(fileName.FullName, backupFullName, false);
 
                     //Only delete additional backups if the new backup was copied sucesfully
-                    if(maxBackups > 0) { DeleteAdditionalBackups(maxBackups, backupChildDirectory);}
-                    MessageOperations.UserMessage(MessageOperations.MessageTypeEnum.BackupSuccess);
-                    return DateTime.Now;
+                    if(this.MaxBackups > 0) { DeleteAdditionalBackups( backupChildDirectory);}
+                    MessageOperations.UserMessage($"Succesfully created backup for Campaign {this.Campaign}",MessageOperations.MessageTypeEnum.BackupSuccess);
+                    this.LastUpdated = DateTime.Now;
+                    return this.LastUpdated;
                 }
                 catch (Exception)
                 {
-                    MessageOperations.UserMessage(MessageOperations.MessageTypeEnum.FileInUseError);
-                    return DateTime.MinValue;
+                    MessageOperations.UserMessage("",MessageOperations.MessageTypeEnum.FileInUseError);
+                    this.LastUpdated = DateTime.Now;
+                    return this.LastUpdated;
                 }
             }
-            MessageOperations.UserMessage(MessageOperations.MessageTypeEnum.DoesNotExistError);
-            return DateTime.MinValue;
+            MessageOperations.UserMessage("No Ironman Saves found in the selected location.", MessageOperations.MessageTypeEnum.BackupError);
+            this.LastUpdated = DateTime.Now;
+            return this.LastUpdated;
         }
 
-        private static void DeleteAdditionalBackups(int maxBackups, string backupChildDirectory)
+        private void DeleteAdditionalBackups(string backupChildDirectory)
         {
             var backupChildInfo = new DirectoryInfo(backupChildDirectory);
             var backupFiles = backupChildInfo.GetFiles().OrderBy(x => x.CreationTime).ToList();
-            var numToDelete = backupFiles.Count() - maxBackups;
+            var numToDelete = backupFiles.Count() - this.MaxBackups;
             if (numToDelete > 0)
             {
                 foreach (var file in backupFiles.Take(numToDelete).ToList())
@@ -120,17 +122,26 @@ namespace IronmanSaveBackup
             return -1;
         }
 
-        public string BuildRestoreName(int campaign)
+        private int GetCampaignFromBackup()
         {
-            Settings.Default.MostRecentCampaign = campaign;
-            Settings.Default.Save();
-            return $@"save_IRONMAN- Campaign {campaign}";
+            var idString = Directory.GetParent(this.RestoreFile).Name;
+            int idValue;
+            if (int.TryParse(idString, out idValue))
+            {
+                return idValue;
+            }
+            return -1;
         }
 
-        private static string BuildBackupLocation(string backuplocation, int campaign)
+        private string BuildRestoreName()
         {
-            var childDirectory = backuplocation + "\\" + campaign + "\\";
+            this.Campaign = GetCampaignFromBackup();
+            return $@"save_IRONMAN- Campaign {this.Campaign}";
+        }
 
+        private string BuildBackupLocation()
+        {
+            var childDirectory = Path.Combine(this.BackupParentFolder, this.Campaign.ToString());
             if (!Directory.Exists(childDirectory))
             {
                 Directory.CreateDirectory(childDirectory);
@@ -139,25 +150,34 @@ namespace IronmanSaveBackup
             return childDirectory;
         }
 
-        private static string BuildBackupName(int campaign)
+        private string BuildBackupName()
         {
-            var date = DateTime.UtcNow;
-            return $@"save_IRONMAN-Campaign {campaign} - {date.Ticks}.isb";
+            return $@"save_IRONMAN-Campaign {this.Campaign} - {DateTime.UtcNow.Ticks}.isb";
         }
 
-        public void StartBackup(bool eventDrivenEnabled, int backupInterval, int backupsToKeep)
+        public void StartBackup()
         {
-            if (!eventDrivenEnabled)
+            this.BackupActive = true;
+            if (!this.EventDrivenBackups)
             {
-                IntervalBackup(backupInterval, backupsToKeep);
+                IntervalBackup();
             }
+            EventBackup();
         }
 
-        private void IntervalBackup(double backupInterval, int backupsToKeep)
+        private void IntervalBackup()
         {
             while (this.BackupActive)
             {
-                
+
+            }
+        }
+
+        private void EventBackup()
+        {
+            while (this.BackupActive)
+            {
+
             }
         }
     }

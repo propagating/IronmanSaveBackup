@@ -9,7 +9,7 @@ namespace IronmanSaveBackup
 {
     class MessageOperations
     {
-        public static bool ConfirmChoice(MessageTypeEnum type)
+        public static bool ConfirmChoice(MessageChoiceEnum type)
         {
             var choice = false;
             var message = "";
@@ -17,15 +17,19 @@ namespace IronmanSaveBackup
             switch (type)
             {
                 //Delete backups
-                case MessageTypeEnum.DeleteChoice:
+                case MessageChoiceEnum.DeleteChoice:
                     message =
                         @"Choosing 'Yes' will DELETE ALL BACKUPS in your backups folder. This is NOT reversible.";
                     caption = "Delete All Backups?";
                     break;
-                    case MessageTypeEnum.ReplaceChoice:
+                    case MessageChoiceEnum.ReplaceChoice:
                         message =
                             @"Choosing 'Yes' will replace the existing Ironman Save for this campaign. Please ensure you have a backup of your current save prior to recovery.";
                         caption = "Restore Backup?";
+                        break;
+                    case MessageChoiceEnum.InvalidChoice:
+                        message = "The choice you selected is invalid.";
+                        caption = "Operation Cancelled";
                         break;
                 default:
                     message = "Are you sure you want to close this box?";
@@ -33,8 +37,8 @@ namespace IronmanSaveBackup
                         
             }
 
-            MessageBoxButtons buttons = MessageBoxButtons.YesNoCancel;
-            DialogResult result = MessageBox.Show(message, caption, buttons);
+            var buttons = MessageBoxButtons.YesNoCancel;
+            var result = MessageBox.Show(message, caption, buttons);
 
             if (result == DialogResult.Yes)
             {
@@ -43,89 +47,71 @@ namespace IronmanSaveBackup
             return choice;
         }
 
-        public static void UserMessage(MessageTypeEnum type = MessageTypeEnum.GenericError)
+        public static void UserMessage(string message, MessageTypeEnum type = MessageTypeEnum.GenericError)
         {
-            var message = "";
             var caption = "";
+            const MessageBoxButtons buttons = MessageBoxButtons.OK;
             switch (type)
             {
                 //Delete backups
                 case MessageTypeEnum.DoesNotExistError:
-                    message =
-                        "The target file does not exist, the operation could not be completed.";
                     caption = "No File/Folder Selected";
+                    MessageBox.Show(message, caption, buttons, MessageBoxIcon.Error);
                     break;
                 case MessageTypeEnum.InvalidPathError:
-                    message =
-                        "The filepath selected is invalid, inaccessible, or does not exist.";
-                    caption = "No File/Folder Selected";
+                    caption = "Invalid Path Error";
+                    MessageBox.Show(message, caption, buttons, MessageBoxIcon.Error);
                     break;
                 case MessageTypeEnum.FileInUseError:
-                    message =
-                        "The Save File is in use by another process (probably XCOM2). The operation cannot be completed.";
-                    caption = "File In Use Error";
-                    break;
-                case MessageTypeEnum.IronmanSaveNotFoundError:
-                    message =
-                        "The Backup operation could not be completed. No Ironman Saves found.";
-                    caption = "Backup Error";
+                    caption = "File In Use";
+                    MessageBox.Show(message, caption, buttons, MessageBoxIcon.Error);
                     break;
                 case MessageTypeEnum.BackupError:
-                    message =
-                        "The Backup operation could not be completed.";
                     caption = "Backup Error";
+                    MessageBox.Show(message, caption, buttons, MessageBoxIcon.Error);
+                    break;
+                case MessageTypeEnum.RestoreError:
+                    caption = "Backup Error";
+                    MessageBox.Show(message, caption, buttons, MessageBoxIcon.Error);
                     break;
                 case MessageTypeEnum.GenericError:
-                    message =
-                        "Uncaught exception occurred.";
-                    caption = "Something Went Wrong";
-                    break;
-                case MessageTypeEnum.RestoreSuccess:
-                    message =
-                        "Backup succesfully restored.";
-                    caption = "Backup Restoration Successful";
+                    caption = "An Error Occurred";
+                    MessageBox.Show(message, caption, buttons, MessageBoxIcon.Error);
                     break;
                 case MessageTypeEnum.BackupSuccess:
-                    message =
-                        "Backup succesfully created.";
-                    caption = "Backup Creation Succesful";
+                    caption = "Backup Operation Successful";
+                    MessageBox.Show(message, caption, buttons, MessageBoxIcon.Information);
                     break;
-                case MessageTypeEnum.DeleteSuccess:
-                    message =
-                        "All backups succesfully deleted.";
-                    caption = "Backup Deletion Successful";
-                    break;
-                case MessageTypeEnum.InvalidChoiceError:
-                    break;
-                case MessageTypeEnum.DeleteChoice:
-                    break;
-                case MessageTypeEnum.ReplaceChoice:
+                case MessageTypeEnum.RestoreSuccess:
+                    caption = "Restoration Successful";
+                    MessageBox.Show(message, caption, buttons, MessageBoxIcon.Information);
                     break;
                 default:
-                    message = "You shouldn't be here. You should close this message box and submit an issue on Github. Include what you did to get here.";
                     caption = "Something Weird Happened";
+                    MessageBox.Show(message, caption, buttons, MessageBoxIcon.Error);
                     break;
 
             }
-
-            MessageBoxButtons buttons = MessageBoxButtons.OK;
-            MessageBox.Show(message, caption, buttons);
+          
         }
 
         public enum MessageTypeEnum
         {
             GenericError,
             DoesNotExistError,
-            InvalidChoiceError,
             InvalidPathError,
-            DeleteChoice,
-            ReplaceChoice,
             FileInUseError,
-            RestoreSuccess,
             BackupError,
             BackupSuccess,
-            DeleteSuccess,
-            IronmanSaveNotFoundError
+            RestoreSuccess,
+            RestoreError
+        }
+
+        public enum MessageChoiceEnum
+        {
+            DeleteChoice,
+            ReplaceChoice,
+            InvalidChoice
         }
     }
 

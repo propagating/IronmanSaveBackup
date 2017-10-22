@@ -26,24 +26,24 @@ namespace IronmanSaveBackup.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string BackupLocation {
+        public string BackupParentFolder {
             get {
-                return ((string)(this["BackupLocation"]));
+                return ((string)(this["BackupParentFolder"]));
             }
             set {
-                this["BackupLocation"] = value;
+                this["BackupParentFolder"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string SaveLocation {
+        public string SaveParentFolder {
             get {
-                return ((string)(this["SaveLocation"]));
+                return ((string)(this["SaveParentFolder"]));
             }
             set {
-                this["SaveLocation"] = value;
+                this["SaveParentFolder"] = value;
             }
         }
         
@@ -74,24 +74,35 @@ namespace IronmanSaveBackup.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("10")]
-        public int KeepBackupNumber {
+        public int MaxBackups {
             get {
-                return ((int)(this["KeepBackupNumber"]));
+                return ((int)(this["MaxBackups"]));
             }
             set {
-                this["KeepBackupNumber"] = value;
+                this["MaxBackups"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("1")]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
         public int MostRecentCampaign {
             get {
                 return ((int)(this["MostRecentCampaign"]));
             }
             set {
                 this["MostRecentCampaign"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public global::System.DateTime LastUpdated {
+            get {
+                return ((global::System.DateTime)(this["LastUpdated"]));
+            }
+            set {
+                this["LastUpdated"] = value;
             }
         }
     }
