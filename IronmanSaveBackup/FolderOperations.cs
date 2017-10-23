@@ -18,8 +18,7 @@ namespace IronmanSaveBackup
             }
             else
             {
-                MessageOperations.UserMessage(MessageOperations.MessageTypeEnum.DoesNotExistError);
-                //TODO: Create a dialog saying no folder has been selected, and/or no default folder has been set
+                MessageOperations.UserMessage("No folder selected, or the selected folder does not exist.", MessageOperations.MessageTypeEnum.DoesNotExistError);
             }
         }
     }

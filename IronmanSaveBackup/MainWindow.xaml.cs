@@ -62,6 +62,7 @@ namespace IronmanSaveBackup
             BackupTextbox.Text = dialog.SelectedPath;
             if (BackupTextbox.Text == null) return;
             runningBackup.BackupParentFolder = BackupTextbox.Text;
+            runningBackup.UpdateSettings();
         }
 
         private void SaveTextbox_Click(object sender, MouseButtonEventArgs e)
@@ -71,6 +72,7 @@ namespace IronmanSaveBackup
             SaveTextbox.Text = dialog.SelectedPath;
             if (SaveTextbox.Text == null) return;
             runningBackup.SaveParentFolder = SaveTextbox.Text;
+            runningBackup.UpdateSettings();
         }
 
         private void OnEventSaves_OnClick(object sender, RoutedEventArgs e)
@@ -78,16 +80,19 @@ namespace IronmanSaveBackup
             IntervalSlider.IsEnabled = OnEventSaves.IsChecked != true;
             IntervalTextbox.IsEnabled = OnEventSaves.IsChecked != true;
             runningBackup.EventDrivenBackups = (bool) OnEventSaves.IsChecked;
+            runningBackup.UpdateSettings();
         }
 
         private void IntervalSlider_OnValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             runningBackup.BackupInterval = (int) IntervalSlider.Value;
+            runningBackup.UpdateSettings();
         }
 
         private void BackupKeepSlider_OnValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             runningBackup.MaxBackups = (int) MaxBackupSlider.Value;
+            runningBackup.UpdateSettings();
         }
 
         private void OpenSaveButton_OnClick(object sender, RoutedEventArgs e)
@@ -162,6 +167,7 @@ namespace IronmanSaveBackup
             var result = dialog.ShowDialog();
             RestoreBackupText.Text = dialog.FileName;
             runningBackup.RestoreFile = RestoreBackupText.Text;
+            runningBackup.UpdateSettings();
         }
 
         private void RestoreBackupButton_OnClick(object sender, RoutedEventArgs e)
@@ -171,6 +177,7 @@ namespace IronmanSaveBackup
                 if (MessageOperations.ConfirmChoice(MessageOperations.MessageChoiceEnum.ReplaceChoice))
                 {
                     runningBackup.RestoreBackup();
+                    runningBackup.UpdateSettings();
                 }
             }
             else
@@ -185,12 +192,9 @@ namespace IronmanSaveBackup
             if (!string.IsNullOrEmpty(runningBackup.BackupParentFolder) && !string.IsNullOrEmpty(runningBackup.SaveParentFolder))
             {
                 
-                var lastUpdated = runningBackup.CreateBackup();
-                if (lastUpdated == DateTime.MinValue)
-                {
-                    MostRecentBackup.Content = "No Save Found for Backup.";
-                }
-                MostRecentBackup.Content = $"Campaign {Settings.Default.MostRecentCampaign} @ {lastUpdated}";
+                runningBackup.LastUpdated = runningBackup.ForceCreateBackup();
+                MostRecentBackup.Content = $"Campaign {runningBackup.Campaign} @ {runningBackup.LastUpdated}";
+                runningBackup.UpdateSettings();
             }
             else
             {
@@ -200,15 +204,22 @@ namespace IronmanSaveBackup
 
         private void StartButton_OnClick(object sender, RoutedEventArgs e)
         {
-            runningBackup.StartBackup();
+            runningBackup.BackupActive = true;
+            //TODO: Insert kick off task
             runningBackup.LastUpdated = DateTime.Now;
             MostRecentBackup.Content = $"Campaign {runningBackup.Campaign} @ {runningBackup.LastUpdated}";
+            runningBackup.UpdateSettings();
+
             StartButton.IsEnabled = false;
+            StopButton.IsEnabled = true;
         }
 
         private void StopButton_OnClick(object sender, RoutedEventArgs e)
         {
+            MostRecentBackup.Content = $"Campaign {runningBackup.Campaign} @ {runningBackup.LastUpdated}";
+            runningBackup.UpdateSettings();
             runningBackup.BackupActive = false;
+
             StopButton.IsEnabled = false;
             StartButton.IsEnabled = true;
         }

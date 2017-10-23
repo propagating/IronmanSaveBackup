@@ -6,6 +6,7 @@ using System.Runtime.CompilerServices;
 using System.Security.RightsManagement;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xaml.Schema;
@@ -22,9 +23,38 @@ namespace IronmanSaveBackup
         public int BackupInterval { get; set; }
         public int Campaign { get; set; }
         public string RestoreName { get; set; }
-        public bool BackupActive { get; set; }
+
+        public bool BackupActive
+        {
+            get { return BackupActive; }
+            set
+            {
+                if (BackupActive)
+                {
+                    StartBackup();
+                }
+            }
+        }
+
         public bool EventDrivenBackups { get; set; }
         public DateTime LastUpdated { get; set; }
+
+        ~Backup()
+        {
+           UpdateSettings();
+        }
+
+        public void UpdateSettings()
+        {
+            Settings.Default.BackupParentFolder = BackupParentFolder;
+            Settings.Default.SaveInterval = BackupInterval;
+            Settings.Default.SaveParentFolder = SaveParentFolder;
+            Settings.Default.MaxBackups = MaxBackups;
+            Settings.Default.EnableOnEventBackup = EventDrivenBackups;
+            Settings.Default.LastUpdated = LastUpdated;
+            Settings.Default.MostRecentCampaign = Campaign;
+            Settings.Default.Save();
+        }
 
         public void RestoreBackup()
         {
@@ -32,12 +62,12 @@ namespace IronmanSaveBackup
             var restorePath = Path.Combine(this.SaveParentFolder, this.RestoreName);
             if (this.Campaign == -1)
             {
-                MessageOperations.UserMessage("Could not determine the Campaign that this backup belongs to.", MessageOperations.MessageTypeEnum.RestoreError);
+                MessageOperations.UserMessage("Could not determine the Campaign that this backup belongs to. Backup was not restored.", MessageOperations.MessageTypeEnum.RestoreError);
             }
             try
             {
                 File.Copy(this.RestoreFile, restorePath, true);
-                MessageOperations.UserMessage($"Succesfully restored saved for Campaign {this.Campaign}",MessageOperations.MessageTypeEnum.RestoreSuccess);
+                MessageOperations.UserMessage($"Succesfully restored save for Campaign {this.Campaign}",MessageOperations.MessageTypeEnum.RestoreSuccess);
             }
             catch (IOException)
             {
@@ -45,7 +75,7 @@ namespace IronmanSaveBackup
             }
         }
 
-        public DateTime CreateBackup()
+        public DateTime ForceCreateBackup()
         {
             //Grabs the most recently updated IronMan save in the save folder
             var regex = new Regex(@"(^save_IRONMAN- Campaign .*$)");
@@ -55,16 +85,13 @@ namespace IronmanSaveBackup
 
             if (fileName != null)
             {
-                var campaignId = GetCampaignFromFileName(fileName.Name);
-                if (campaignId == -1)
+                this.Campaign = GetCampaignFromFileName(fileName.Name);
+                if (this.Campaign == -1)
                 {
                     MessageOperations.UserMessage("Could not determine the Campaign for the Ironman Saves Found.",MessageOperations.MessageTypeEnum.BackupError);
                     this.LastUpdated = DateTime.Now;
                     return this.LastUpdated;
                 }
-
-                Settings.Default.MostRecentCampaign = campaignId;
-                Settings.Default.Save();
 
                 //Create our backup directory and filenames
                 var backupFileName = BuildBackupName();
@@ -99,14 +126,11 @@ namespace IronmanSaveBackup
             var backupChildInfo = new DirectoryInfo(backupChildDirectory);
             var backupFiles = backupChildInfo.GetFiles().OrderBy(x => x.CreationTime).ToList();
             var numToDelete = backupFiles.Count() - this.MaxBackups;
-            if (numToDelete > 0)
+            if (numToDelete <= 0) return;
+            foreach (var file in backupFiles.Take(numToDelete).ToList())
             {
-                foreach (var file in backupFiles.Take(numToDelete).ToList())
-                {
-                    File.Delete(file.FullName);
-                }
+                File.Delete(file.FullName);
             }
-
         }
 
         private static int GetCampaignFromFileName(string fileName)
@@ -142,11 +166,13 @@ namespace IronmanSaveBackup
         private string BuildBackupLocation()
         {
             var childDirectory = Path.Combine(this.BackupParentFolder, this.Campaign.ToString());
-            if (!Directory.Exists(childDirectory))
+
+            if (Directory.Exists(childDirectory))
             {
-                Directory.CreateDirectory(childDirectory);
+                return childDirectory;
             }
 
+            Directory.CreateDirectory(childDirectory);
             return childDirectory;
         }
 
@@ -155,21 +181,23 @@ namespace IronmanSaveBackup
             return $@"save_IRONMAN-Campaign {this.Campaign} - {DateTime.UtcNow.Ticks}.isb";
         }
 
-        public void StartBackup()
+        private async void StartBackup()
         {
-            this.BackupActive = true;
-            if (!this.EventDrivenBackups)
+            if (EventDrivenBackups)
             {
-                IntervalBackup();
+                EventBackup();
             }
-            EventBackup();
+            await IntervalBackup();
         }
 
-        private void IntervalBackup()
+
+        private async Task IntervalBackup()
         {
+            var interval = TimeSpan.FromMinutes(this.BackupInterval);
             while (this.BackupActive)
             {
-
+                await CreateBackup();
+                await Task.Delay(interval);
             }
         }
 
@@ -177,8 +205,32 @@ namespace IronmanSaveBackup
         {
             while (this.BackupActive)
             {
-
+                using (var watcher = new FileSystemWatcher())
+                {
+                    watcher.Path = SaveParentFolder;
+                    watcher.NotifyFilter = NotifyFilters.CreationTime|NotifyFilters.Size|NotifyFilters.Attributes|NotifyFilters.LastAccess|NotifyFilters.FileName;
+                    watcher.Filter = "temp";
+                    watcher.Renamed += new RenamedEventHandler(OnRename);
+                }
             }
+        }
+
+        private void OnRename(object sender, RenamedEventArgs e)
+        {
+            try
+            {
+                Thread.Sleep(500);
+                CreateBackup();
+            }
+            catch
+            {
+                
+            }
+        }
+
+        private Task CreateBackup()
+        {
+            throw new NotImplementedException();
         }
     }
 }
