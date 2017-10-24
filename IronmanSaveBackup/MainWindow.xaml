@@ -32,7 +32,7 @@
 
 
         <TextBox x:Name="IntervalTextbox" HorizontalAlignment="Left" Height="25" TextWrapping="Wrap"  Text="{Binding ElementName=IntervalSlider, Path=Value,UpdateSourceTrigger=PropertyChanged}" IsReadOnly="True" VerticalAlignment="Top" Width="70" Margin="500,95,30,0"/>
-        <Slider x:Name="IntervalSlider" Minimum="0" Maximum="60" TickFrequency="1" ValueChanged="IntervalSlider_OnValueChanged" IsSnapToTickEnabled="True"  IsMoveToPointEnabled="True" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="270,95,0,0" Width="200"/>
+        <Slider x:Name="IntervalSlider" Minimum="1" Maximum="60" TickFrequency="1" ValueChanged="IntervalSlider_OnValueChanged" IsSnapToTickEnabled="True"  IsMoveToPointEnabled="True" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="270,95,0,0" Width="200"/>
 
         <TextBox x:Name="MaxBackupTextbox" HorizontalAlignment="Left" Height="25" TextWrapping="Wrap" Text="{Binding ElementName=MaxBackupSlider, Path=Value, UpdateSourceTrigger=PropertyChanged}" IsReadOnly="True" VerticalAlignment="Top" Width="70" Margin="500,130,30,0"/>
         <Slider x:Name="MaxBackupSlider" ToolTip="Select 0 to keep all backups. When the limit is reached the oldest backup will be deleted." Minimum="0" Maximum="20" TickFrequency="1" ValueChanged="BackupKeepSlider_OnValueChanged"  IsSnapToTickEnabled="True" IsMoveToPointEnabled="True"  HorizontalAlignment="Left" VerticalAlignment="Top" Margin="270,130,0,0" Width="200"/>
