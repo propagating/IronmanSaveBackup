@@ -29,7 +29,9 @@ namespace IronmanSaveBackup
         {
             InitializeComponent();
 
-            OnEventSaves.IsChecked = Settings.Default.EnableOnEventBackup;
+            //TODO: Re-enable once this is working correctly
+            //OnEventSaves.IsChecked = Settings.Default.EnableOnEventBackup;
+            OnEventSaves.IsChecked = false;
             BackupTextbox.Text = Settings.Default.BackupParentFolder;
             SaveTextbox.Text = Settings.Default.SaveParentFolder;
             IntervalSlider.Value = Settings.Default.SaveInterval;
@@ -86,13 +88,11 @@ namespace IronmanSaveBackup
         private void IntervalSlider_OnValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             runningBackup.BackupInterval = (int) IntervalSlider.Value;
-            runningBackup.UpdateSettings();
         }
 
         private void BackupKeepSlider_OnValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             runningBackup.MaxBackups = (int) MaxBackupSlider.Value;
-            runningBackup.UpdateSettings();
         }
 
         private void OpenSaveButton_OnClick(object sender, RoutedEventArgs e)
@@ -191,7 +191,6 @@ namespace IronmanSaveBackup
         {
             if (!string.IsNullOrEmpty(runningBackup.BackupParentFolder) && !string.IsNullOrEmpty(runningBackup.SaveParentFolder))
             {
-                
                 runningBackup.LastUpdated = runningBackup.ForceCreateBackup();
                 MostRecentBackup.Content = $"Campaign {runningBackup.Campaign} @ {runningBackup.LastUpdated}";
                 runningBackup.UpdateSettings();
@@ -205,11 +204,8 @@ namespace IronmanSaveBackup
         private void StartButton_OnClick(object sender, RoutedEventArgs e)
         {
             runningBackup.BackupActive = true;
-            //TODO: Insert kick off task
-            runningBackup.LastUpdated = DateTime.Now;
             MostRecentBackup.Content = $"Campaign {runningBackup.Campaign} @ {runningBackup.LastUpdated}";
             runningBackup.UpdateSettings();
-
             StartButton.IsEnabled = false;
             StopButton.IsEnabled = true;
         }
@@ -219,9 +215,8 @@ namespace IronmanSaveBackup
             MostRecentBackup.Content = $"Campaign {runningBackup.Campaign} @ {runningBackup.LastUpdated}";
             runningBackup.UpdateSettings();
             runningBackup.BackupActive = false;
-
-            StopButton.IsEnabled = false;
             StartButton.IsEnabled = true;
+            StopButton.IsEnabled = false;
         }
     }
 }

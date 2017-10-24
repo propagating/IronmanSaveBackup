@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:IronmanSaveBackup"
         mc:Ignorable="d"
-        Title="Ironman Save Backup" Height="420" Width="620">
+        Title="Ironman Save Backup" Height="Auto" Width="Auto" SizeToContent="WidthAndHeight">
     <Grid>
         <Label x:Name="SaveLocationLabel" Content="Ironman Save Location" HorizontalAlignment="Left" Margin="30,25,0,0" VerticalAlignment="Top"/>
         <Label x:Name="BackupLocationLabel" Content="Backup Location" HorizontalAlignment="Left" Margin="30,60,0,0" VerticalAlignment="Top"/>
@@ -24,17 +24,17 @@
         <Button x:Name="DeleteBackupButton" Click="DeleteBackupButton_OnClick" Content="Delete All Backups" HorizontalAlignment="Left" Background="Red" Foreground="Black" VerticalAlignment="Top" Width="180" Margin="30,290,0,0"/>
         <Button x:Name="RestoreBackupButton" Content="Restore Selected Backup" Click="RestoreBackupButton_OnClick"  HorizontalAlignment="Left" Margin="345,210,0,0" VerticalAlignment="Top" Width="150"/>
 
-        <TextBox x:Name="SaveTextbox" HorizontalAlignment="Left"  PreviewMouseLeftButtonDown="SaveTextbox_Click" ToolTip="This is usually found in My Documents/My Games/XCOM2/XComGame/SaveData. For WOTC the folder name is XCOM2 War of the Chosen." Height="25" Margin="270,25,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="300"/>
-        <TextBox x:Name="BackupTextbox" HorizontalAlignment="Left" PreviewMouseLeftButtonUp="BackupTextbox_Click" Height="25" TextWrapping="Wrap"  Text="" VerticalAlignment="Top" Width="300" Margin="270,60,0,0"/>
-        <TextBox x:Name="RestoreBackupText" HorizontalAlignment="Left" PreviewMouseLeftButtonDown="RestoreBackupText_OnPreviewMouseLeftButtonDown" Margin="270,165,0,0" VerticalAlignment="Top" Width="300"/>
+        <TextBox x:Name="SaveTextbox" HorizontalAlignment="Left"  PreviewMouseLeftButtonDown="SaveTextbox_Click" ToolTip="This is usually found in My Documents/My Games/XCOM2/XComGame/SaveData. For WOTC the folder name is XCOM2 War of the Chosen." Height="25" Margin="270,25,30,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="300"/>
+        <TextBox x:Name="BackupTextbox" HorizontalAlignment="Left" PreviewMouseLeftButtonUp="BackupTextbox_Click" Height="25" TextWrapping="Wrap"  Text="" VerticalAlignment="Top" Width="300" Margin="270,60,30,0"/>
+        <TextBox x:Name="RestoreBackupText" HorizontalAlignment="Left" PreviewMouseLeftButtonDown="RestoreBackupText_OnPreviewMouseLeftButtonDown" Margin="270,165,30,0" VerticalAlignment="Top" Width="300"/>
 
-        <CheckBox x:Name="OnEventSaves" Content="Enable Event Driven Saves" Click="OnEventSaves_OnClick" ToolTip="Instead of backups occuring on an interval, a backup occurs every time the save file changes." HorizontalAlignment="Left" Margin="350,245,0,0" VerticalAlignment="Top" Width="175"/>
+        <CheckBox x:Name="OnEventSaves" IsEnabled= "False" Content="Enable Event Driven Saves" Click="OnEventSaves_OnClick" ToolTip="Instead of backups occuring on an interval, a backup occurs every time the save file changes." HorizontalAlignment="Left" Margin="350,245,0,0" VerticalAlignment="Top" Width="175"/>
 
 
-        <TextBox x:Name="IntervalTextbox" HorizontalAlignment="Left" Height="25" TextWrapping="Wrap"  Text="{Binding ElementName=IntervalSlider, Path=Value,UpdateSourceTrigger=PropertyChanged}" IsReadOnly="True" VerticalAlignment="Top" Width="70" Margin="500,95,0,0"/>
+        <TextBox x:Name="IntervalTextbox" HorizontalAlignment="Left" Height="25" TextWrapping="Wrap"  Text="{Binding ElementName=IntervalSlider, Path=Value,UpdateSourceTrigger=PropertyChanged}" IsReadOnly="True" VerticalAlignment="Top" Width="70" Margin="500,95,30,0"/>
         <Slider x:Name="IntervalSlider" Minimum="0" Maximum="60" TickFrequency="1" ValueChanged="IntervalSlider_OnValueChanged" IsSnapToTickEnabled="True"  IsMoveToPointEnabled="True" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="270,95,0,0" Width="200"/>
 
-        <TextBox x:Name="MaxBackupTextbox" HorizontalAlignment="Left" Height="25" TextWrapping="Wrap" Text="{Binding ElementName=MaxBackupSlider, Path=Value, UpdateSourceTrigger=PropertyChanged}" IsReadOnly="True" VerticalAlignment="Top" Width="70" Margin="500,130,0,0"/>
+        <TextBox x:Name="MaxBackupTextbox" HorizontalAlignment="Left" Height="25" TextWrapping="Wrap" Text="{Binding ElementName=MaxBackupSlider, Path=Value, UpdateSourceTrigger=PropertyChanged}" IsReadOnly="True" VerticalAlignment="Top" Width="70" Margin="500,130,30,0"/>
         <Slider x:Name="MaxBackupSlider" ToolTip="Select 0 to keep all backups. When the limit is reached the oldest backup will be deleted." Minimum="0" Maximum="20" TickFrequency="1" ValueChanged="BackupKeepSlider_OnValueChanged"  IsSnapToTickEnabled="True" IsMoveToPointEnabled="True"  HorizontalAlignment="Left" VerticalAlignment="Top" Margin="270,130,0,0" Width="200"/>
 
 

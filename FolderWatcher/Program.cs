@@ -61,12 +61,16 @@ namespace FolderWatcher
         {
             Console.WriteLine($"File: {e.FullPath} \n{e.ChangeType}\n");
             Console.WriteLine("----------------------------------------");
+            Console.WriteLine(DateTime.Now);
+            Console.WriteLine("----------------------------------------");
 
         }
 
         static void OnRename(object source, RenamedEventArgs e)
         {
-            Console.WriteLine($"File: {e.OldFullPath} renamed to {e.FullPath}\n");
+            Console.WriteLine($"File: {e.OldFullPath} renamed \n {e.FullPath}\n");
+            Console.WriteLine("----------------------------------------");
+            Console.WriteLine(DateTime.Now);
             Console.WriteLine("----------------------------------------");
         }
     }
