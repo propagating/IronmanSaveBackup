@@ -59,7 +59,11 @@ namespace IronmanSaveBackup
 
         private void BackupTextbox_Click(object sender, MouseButtonEventArgs e)
         {
-            var dialog = new FolderBrowserDialog {RootFolder = Environment.SpecialFolder.Desktop};
+            var dialog = new FolderBrowserDialog { SelectedPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) };
+            if (runningBackup.BackupParentFolder != string.Empty)
+            {
+                dialog.SelectedPath = runningBackup.BackupParentFolder;
+            }
             var result = dialog.ShowDialog();
             BackupTextbox.Text = dialog.SelectedPath;
             if (BackupTextbox.Text == null) return;
@@ -69,7 +73,12 @@ namespace IronmanSaveBackup
 
         private void SaveTextbox_Click(object sender, MouseButtonEventArgs e)
         {
-            var dialog = new FolderBrowserDialog {RootFolder = Environment.SpecialFolder.Desktop};
+            var dialog = new FolderBrowserDialog { SelectedPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) };
+            if (runningBackup.SaveParentFolder != string.Empty)
+            {
+                dialog.SelectedPath = runningBackup.SaveParentFolder;
+            }
+
             var result = dialog.ShowDialog();
             SaveTextbox.Text = dialog.SelectedPath;
             if (SaveTextbox.Text == null) return;
