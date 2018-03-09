@@ -34,7 +34,7 @@ namespace FolderWatcher
         static void Main(string[] args)
         {
             //TODO: Update to the path that your saves are located 
-            var filePath = @"C:\Users\Ryan\Documents\My Games\XCOM2 War of the Chosen\XComGame\SaveData";
+            var filePath = args[0];
             using (var watcher = new FileSystemWatcher())
             {
                 watcher.Path = filePath;
