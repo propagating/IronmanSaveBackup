@@ -25,11 +25,12 @@ namespace FolderWatcher
             Why is this important? I'm hoping it can eventually provide insight into why the Ironman saves have the issues that they do. 
             
             Some other things to note: 
-            A save event is kicked off when you press the 'Load' button while in Ironman.
-            A save event may occur if you see a pod, even if it's not activated.
-            Some save events can occur while your actor is moving/dying/really doing anything -- this is one of the areas that I could imagine leading to save corruption at the end of a mission
+            A save event is kicked off when you press the 'Load' button while in Ironman, it does not kick off a save every turn
+            A save event may occur if you see a pod, VIP, new enemy, tower to hack, or really any entity that you can interact with (even if you do not interact with/trigger them)
+            This also leads to some odd cases where saves take place in the middle of the player's turn -- an area worth investigating for potential corruption
+            Some save events can occur while your actor is in the middle of moving/dying/really doing anything -- another area worth investigating for corruption, combined with a few other quirks in the system could cause some unintended behavior
             A save event seems to occur each time an objective is completed
-            Saves on the avenger appear to have the same steps as the saves during a mission, though they are kicked off in somewhat weird time
+            Saves on the avenger appear to have the same steps as the saves during a mission, though they are triggered by some vents that I'm still not 100% on
         */
         static void Main(string[] args)
         {
