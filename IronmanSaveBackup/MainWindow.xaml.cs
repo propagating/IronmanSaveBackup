@@ -26,10 +26,18 @@ namespace IronmanSaveBackup
     public partial class MainWindow : Window
     {
         Backup runningBackup = new Backup();
+
+        internal string recentBackup
+        {
+            get { return MostRecentBackup.Content.ToString(); }
+            set { this.Dispatcher.Invoke(new Action(() => { MostRecentBackup.Content = value; })); }
+        }
+
+        internal static MainWindow mainWindow;
         public MainWindow()
         {
             InitializeComponent();
-
+            mainWindow = this;
             OnEventSaves.IsChecked = Settings.Default.EnableOnEventBackup;
             BackupTextbox.Text = Settings.Default.BackupParentFolder;
             SaveTextbox.Text = Settings.Default.SaveParentFolder;
@@ -206,8 +214,6 @@ namespace IronmanSaveBackup
             if (!string.IsNullOrEmpty(runningBackup.BackupParentFolder) && !string.IsNullOrEmpty(runningBackup.SaveParentFolder))
             {
                 runningBackup.LastUpdated = runningBackup.ForceCreateBackup();
-                MostRecentBackup.Content = $"Campaign {runningBackup.Campaign} @ {runningBackup.LastUpdated}";
-                runningBackup.UpdateSettings();
             }
             else
             {
@@ -217,23 +223,21 @@ namespace IronmanSaveBackup
 
         private void StartButton_OnClick(object sender, RoutedEventArgs e)
         {
-            runningBackup.BackupActive = true;
-            MostRecentBackup.Content = $"Campaign {runningBackup.Campaign} @ {runningBackup.LastUpdated}";
-            runningBackup.UpdateSettings();
             SaveTextbox.IsEnabled = false;
             BackupTextbox.IsEnabled = false;
             StartButton.IsEnabled = false;
             StopButton.IsEnabled = true;
+            runningBackup.BackupActive = true;
+            runningBackup.UpdateSettings();
         }
 
         private void StopButton_OnClick(object sender, RoutedEventArgs e)
         {
-            MostRecentBackup.Content = $"Campaign {runningBackup.Campaign} @ {runningBackup.LastUpdated}";
             runningBackup.CancelBackupSource.Cancel();
+            runningBackup.BackupActive = false;
             runningBackup.UpdateSettings();
             SaveTextbox.IsEnabled = true;
             BackupTextbox.IsEnabled = true;
-            runningBackup.BackupActive = false;
             StartButton.IsEnabled = true;
             StopButton.IsEnabled = false;
         }
