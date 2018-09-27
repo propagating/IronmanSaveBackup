@@ -16,6 +16,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using IronmanSaveBackup.Properties;
+using Path = System.IO.Path;
 
 namespace IronmanSaveBackup
 {
@@ -168,7 +169,7 @@ namespace IronmanSaveBackup
         {
             var dialog = new OpenFileDialog
             {
-                Filter = @"Backup Files (*.isb)|*.isb|All Files (*.*)|*.*",
+                Filter = @"Backup Files (*.isb)|*.isb",
                 InitialDirectory = runningBackup.BackupParentFolder
             };
             var result = dialog.ShowDialog();
@@ -181,7 +182,13 @@ namespace IronmanSaveBackup
         {
             if (File.Exists(runningBackup.RestoreFile))
             {
-                if (MessageOperations.ConfirmChoice(MessageOperations.MessageChoiceEnum.ReplaceChoice))
+                if (Path.GetExtension(runningBackup.RestoreFile).ToLower() != ".isb")
+                {
+                    MessageOperations.UserMessage("You've selected an invalid file for restoration.", MessageOperations.MessageTypeEnum.RestoreError);
+                    RestoreBackupText.Text = "";
+                    runningBackup.RestoreFile = "";
+                }
+                else if (MessageOperations.ConfirmChoice(MessageOperations.MessageChoiceEnum.ReplaceChoice))
                 {
                     runningBackup.RestoreBackup();
                     runningBackup.UpdateSettings();
@@ -189,7 +196,7 @@ namespace IronmanSaveBackup
             }
             else
             {
-                MessageOperations.UserMessage("The selected restore file no longer exists. Please choose another.", MessageOperations.MessageTypeEnum.DoesNotExistError);
+                MessageOperations.UserMessage("The selected restore file does not exist.", MessageOperations.MessageTypeEnum.DoesNotExistError);
             }
 
         }
