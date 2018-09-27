@@ -71,7 +71,7 @@ namespace IronmanSaveBackup
                     MessageBox.Show(message, caption, buttons, MessageBoxIcon.Error);
                     break;
                 case MessageTypeEnum.RestoreError:
-                    caption = "Backup Error";
+                    caption = "Restore Error";
                     MessageBox.Show(message, caption, buttons, MessageBoxIcon.Error);
                     break;
                 case MessageTypeEnum.GenericError:

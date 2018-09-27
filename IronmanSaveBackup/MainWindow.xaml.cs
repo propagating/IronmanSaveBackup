@@ -16,6 +16,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using IronmanSaveBackup.Properties;
+using Path = System.IO.Path;
 
 namespace IronmanSaveBackup
 {
@@ -145,7 +146,7 @@ namespace IronmanSaveBackup
                     }
                     catch (ArgumentException)
                     {
-                        MessageOperations.UserMessage("Could not all backups in selected bakcup folder.", MessageOperations.MessageTypeEnum.BackupError);
+                        MessageOperations.UserMessage("Could not remove all backups in selected folder.", MessageOperations.MessageTypeEnum.BackupError);
                     }
                     catch (Exception)
                     {
@@ -158,7 +159,7 @@ namespace IronmanSaveBackup
             }
             else
             {
-                MessageOperations.UserMessage("The selected Backup Folder does not exist.", MessageOperations.MessageTypeEnum.DoesNotExistError);
+                MessageOperations.UserMessage("The selected Backup Folder does not exist or cannot be found.", MessageOperations.MessageTypeEnum.DoesNotExistError);
             }
 
 
@@ -168,7 +169,7 @@ namespace IronmanSaveBackup
         {
             var dialog = new OpenFileDialog
             {
-                Filter = @"Backup Files (*.isb)|*.isb|All Files (*.*)|*.*",
+                Filter = @"Backup Files (*.isb)|*.isb",
                 InitialDirectory = runningBackup.BackupParentFolder
             };
             var result = dialog.ShowDialog();
@@ -181,7 +182,13 @@ namespace IronmanSaveBackup
         {
             if (File.Exists(runningBackup.RestoreFile))
             {
-                if (MessageOperations.ConfirmChoice(MessageOperations.MessageChoiceEnum.ReplaceChoice))
+                if (Path.GetExtension(runningBackup.RestoreFile).ToLower() != ".isb")
+                {
+                    MessageOperations.UserMessage("You've selected an invalid file for restoration.", MessageOperations.MessageTypeEnum.RestoreError);
+                    RestoreBackupText.Text = "";
+                    runningBackup.RestoreFile = "";
+                }
+                else if (MessageOperations.ConfirmChoice(MessageOperations.MessageChoiceEnum.ReplaceChoice))
                 {
                     runningBackup.RestoreBackup();
                     runningBackup.UpdateSettings();
@@ -189,7 +196,7 @@ namespace IronmanSaveBackup
             }
             else
             {
-                MessageOperations.UserMessage("The selected restore file no longer exists. Please choose another.", MessageOperations.MessageTypeEnum.DoesNotExistError);
+                MessageOperations.UserMessage("The file selected for restoration does not exist.", MessageOperations.MessageTypeEnum.DoesNotExistError);
             }
 
         }
@@ -204,7 +211,7 @@ namespace IronmanSaveBackup
             }
             else
             {
-                MessageOperations.UserMessage("The selected Backup Folder and/or Save Folder does not exist. Please verify the locations selected.", MessageOperations.MessageTypeEnum.DoesNotExistError);
+                MessageOperations.UserMessage("The selected Backup Folder and/or Save Folder does not exist.", MessageOperations.MessageTypeEnum.DoesNotExistError);
             }
         }
 
