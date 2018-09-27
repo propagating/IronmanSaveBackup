@@ -35,7 +35,7 @@ namespace FolderWatcher
         static void Main(string[] args)
         {
             //TODO: Update to the path that your saves are located 
-            var filePath = args[0];
+            var filePath = @"C:\Users\Ryan\Documents\My Games\XCOM2 War of the Chosen\XComGame\SaveData";
             using (var watcher = new FileSystemWatcher())
             {
                 watcher.Path = filePath;
@@ -45,9 +45,7 @@ namespace FolderWatcher
                 //TODO: Update to the naming scheme of your ironman saves. 
                 watcher.Filter = "save_IRONMAN*";
                 watcher.Changed += new FileSystemEventHandler(OnEvent);
-                watcher.Created += new FileSystemEventHandler(OnEvent);
-                watcher.Deleted += new FileSystemEventHandler(OnEvent);
-                watcher.Renamed += new RenamedEventHandler(OnRename);
+
 
                 watcher.EnableRaisingEvents = true;
                 Console.WriteLine("Press 'q' to quit.");
@@ -60,7 +58,8 @@ namespace FolderWatcher
 
         static void OnEvent(object soruce, FileSystemEventArgs e)
         {
-            Console.WriteLine($"File: {e.FullPath} \n{e.ChangeType}\n");
+            
+            Console.WriteLine($"File: {e.FullPath} \n{e.ChangeType}\n{e.Name}\n");
             Console.WriteLine("----------------------------------------");
             Console.WriteLine(DateTime.Now);
             Console.WriteLine("----------------------------------------");

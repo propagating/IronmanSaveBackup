@@ -29,9 +29,7 @@ namespace IronmanSaveBackup
         {
             InitializeComponent();
 
-            //TODO: Re-enable once this is working correctly
-            //OnEventSaves.IsChecked = Settings.Default.EnableOnEventBackup;
-            OnEventSaves.IsChecked = false;
+            OnEventSaves.IsChecked = Settings.Default.EnableOnEventBackup;
             BackupTextbox.Text = Settings.Default.BackupParentFolder;
             SaveTextbox.Text = Settings.Default.SaveParentFolder;
             IntervalSlider.Value = Settings.Default.SaveInterval;
@@ -215,6 +213,8 @@ namespace IronmanSaveBackup
             runningBackup.BackupActive = true;
             MostRecentBackup.Content = $"Campaign {runningBackup.Campaign} @ {runningBackup.LastUpdated}";
             runningBackup.UpdateSettings();
+            SaveTextbox.IsEnabled = false;
+            BackupTextbox.IsEnabled = false;
             StartButton.IsEnabled = false;
             StopButton.IsEnabled = true;
         }
@@ -222,7 +222,10 @@ namespace IronmanSaveBackup
         private void StopButton_OnClick(object sender, RoutedEventArgs e)
         {
             MostRecentBackup.Content = $"Campaign {runningBackup.Campaign} @ {runningBackup.LastUpdated}";
+            runningBackup.CancelBackupSource.Cancel();
             runningBackup.UpdateSettings();
+            SaveTextbox.IsEnabled = true;
+            BackupTextbox.IsEnabled = true;
             runningBackup.BackupActive = false;
             StartButton.IsEnabled = true;
             StopButton.IsEnabled = false;

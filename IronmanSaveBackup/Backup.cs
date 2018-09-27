@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -23,6 +24,7 @@ namespace IronmanSaveBackup
         public int BackupInterval { get; set; }
         public int Campaign { get; set; }
         public string RestoreName { get; set; }
+        public CancellationTokenSource CancelBackupSource { get; set; }
         private bool _backupActive { get; set; }
         public bool BackupActive
         {
@@ -70,7 +72,7 @@ namespace IronmanSaveBackup
             try
             {
                 File.Copy(this.RestoreFile, restorePath, true);
-                MessageOperations.UserMessage($"Succesfully restored save for Campaign {this.Campaign}",
+                MessageOperations.UserMessage($"Successfully restored save for Campaign {this.Campaign}",
                     MessageOperations.MessageTypeEnum.RestoreSuccess);
             }
             catch (IOException)
@@ -106,7 +108,6 @@ namespace IronmanSaveBackup
 
                 try
                 {
-                    fileName.LastWriteTime = DateTime.Now;
                     File.Copy(fileName.FullName, backupFullName, false);
 
                     //Only delete additional backups if the new backup was copied sucesfully
@@ -114,7 +115,7 @@ namespace IronmanSaveBackup
                     {
                         DeleteAdditionalBackups(backupChildDirectory);
                     }
-                    MessageOperations.UserMessage($"Succesfully created backup for Campaign {this.Campaign}",
+                    MessageOperations.UserMessage($"Successfully created backup for Campaign {this.Campaign}",
                         MessageOperations.MessageTypeEnum.BackupSuccess);
                     return DateTime.Now;
                 }
@@ -186,50 +187,63 @@ namespace IronmanSaveBackup
 
         private string BuildBackupName()
         {
-            return $@"save_IRONMAN-Campaign {this.Campaign} - {DateTime.UtcNow.Ticks}.isb";
+            return $@"{DateTime.Now:yyyy-dd-MM-HH-mm-ss}.isb";
         }
 
         private async void StartBackup()
         {
+            CancelBackupSource = new CancellationTokenSource();
+            var cancellationToken = CancelBackupSource.Token;
             if (EventDrivenBackups)
             {
-                await EventBackup();
+                while (!cancellationToken.IsCancellationRequested)
+                {
+                    await Task.Run(()=> EventBackup(), cancellationToken);
+                }
             }
-            await IntervalBackup();
-        }
-
-
-        private async Task IntervalBackup()
-        {
-            TimeSpan interval;
-            while (this.BackupActive)
+            else
             {
+                TimeSpan interval;
                 interval = TimeSpan.FromMinutes(this.BackupInterval);
-                this.LastUpdated = CreateBackup();
-                await Task.Delay(interval);
+                while (!cancellationToken.IsCancellationRequested)
+                {
+                    this.LastUpdated = CreateBackup();
+                    try
+                    {
+                        await Task.Delay(interval, cancellationToken);
+                    }
+                    catch (TaskCanceledException e)
+                    {
+                        this.BackupActive = false;
+                    }
+                   
+                }
             }
         }
 
-        private Task EventBackup()
+        private void EventBackup()
         {
             var tcs = new TaskCompletionSource<bool>();
-            var watcher = new FileSystemWatcher
+            using (var watcher = new FileSystemWatcher())
             {
-                Path = SaveParentFolder,
-                NotifyFilter = NotifyFilters.CreationTime | NotifyFilters.Size | NotifyFilters.Attributes |
-                               NotifyFilters.LastAccess | NotifyFilters.FileName | NotifyFilters.Size,
-                Filter = "save_IRONMAN"
-            };
+                watcher.Path = SaveParentFolder;
+                watcher.NotifyFilter = NotifyFilters.CreationTime | NotifyFilters.FileName | NotifyFilters.LastAccess |
+                                       NotifyFilters.LastWrite | NotifyFilters.Attributes | NotifyFilters.Size | NotifyFilters.LastWrite;
 
-            watcher.Renamed += new RenamedEventHandler(OnRename);
-            watcher.EnableRaisingEvents = true;
-            return tcs.Task;
+                //TODO: Update to the naming scheme of your ironman saves. 
+                watcher.Filter = "save_IRONMAN*";
+                watcher.Changed += new FileSystemEventHandler(OnEvent);
+                watcher.EnableRaisingEvents = true;
+                while (this.BackupActive)
+                {
+
+                }
+            }
 
         }
 
-        private void OnRename(object sender, RenamedEventArgs e)
+        private void OnEvent(object sender, FileSystemEventArgs e)
         {
-                Thread.Sleep(200);
                 this.LastUpdated = CreateBackup();
         }
 
@@ -264,10 +278,9 @@ namespace IronmanSaveBackup
 
             try
             {
-                fileName.LastWriteTime = DateTime.Now;
                 File.Copy(fileName.FullName, backupFullName, false);
 
-                //Only delete additional backups if the new backup was copied sucesfully
+                //Only delete additional backups if the new backup was copied successfully
                 if (this.MaxBackups > 0)
                 {
                     DeleteAdditionalBackups(backupChildDirectory);
@@ -279,6 +292,7 @@ namespace IronmanSaveBackup
                 MessageOperations.UserMessage("Exception occured. Backup operation stopped.",
                     MessageOperations.MessageTypeEnum.BackupError);
                 this.BackupActive = false;
+                this.CancelBackupSource.Cancel();
                 return DateTime.Now;
             }
         }

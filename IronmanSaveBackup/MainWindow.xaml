@@ -5,30 +5,30 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:IronmanSaveBackup"
         mc:Ignorable="d"
-        Title="Ironman Save Backup" Height="Auto" Width="Auto" SizeToContent="WidthAndHeight">
-    <Grid>
+        Title="Ironman Save Backup" Height="Auto" Width="Auto" SizeToContent="WidthAndHeight" ResizeMode="NoResize" Icon="isb.ico">
+    <Grid Width="700">
         <Label x:Name="SaveLocationLabel" Content="Ironman Save Location" HorizontalAlignment="Left" Margin="30,25,0,0" VerticalAlignment="Top"/>
         <Label x:Name="BackupLocationLabel" Content="Backup Location" HorizontalAlignment="Left" Margin="30,60,0,0" VerticalAlignment="Top"/>
         <Label x:Name="IntervalLabel" Content="Backup Interval (Minutes)" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="30,95,0,0"/>
         <Label x:Name="NumToKeepLabel" Content="Backups to Keep" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="30,130,0,0"/>
         <Label x:Name="RestoreBackupLabel" Content="Restore Backup" HorizontalAlignment="Left" Margin="30,165,0,0" VerticalAlignment="Top" Width="100"/>
-        <Label x:Name="MostRecentBackup" x:FieldModifier="public" Content="N/A" IsEnabled="False" HorizontalContentAlignment="Center"  HorizontalAlignment="Left" Margin="320,335,0,0" VerticalAlignment='Top' Width="250"/>
+        <Label x:Name="MostRecentBackup" x:FieldModifier="public" Content="N/A" IsEnabled="False" HorizontalContentAlignment="Center"  HorizontalAlignment="Left" Margin="185,335,0,0" VerticalAlignment='Top' Width="250"/>
         <Label x:Name="MostRecentLabel" Content="Most Recent Backup" HorizontalAlignment="Left" Margin="30,335,0,0" VerticalAlignment="Top" Width="150"/>
 
         <Button x:Name="StartButton" Content="Start Backup" Click="StartButton_OnClick" HorizontalAlignment="Left" VerticalAlignment="Top" Width="100" Margin="30,210,0,0"/>
         <Button x:Name="StopButton" Content="Stop Backup" Click="StopButton_OnClick" IsEnabled="False" HorizontalAlignment="Left" VerticalAlignment="Top" Width="100" Margin="135,210,0,0"/>
-        
+
         <Button x:Name="ForceBackupButton" Content="Force Backup" Click="ForceBackupButton_OnClick" HorizontalAlignment="Left" Margin="240,210,0,0" VerticalAlignment="Top" Width="100"/>
         <Button x:Name="OpenSaveButton" Content="Open Save Directory" Click="OpenSaveButton_OnClick"  HorizontalAlignment="Left" VerticalAlignment="Top" Width="150" Margin="30,245,0,0"/>
         <Button x:Name="OpenBackupButton" Content="Open Backup Directory" Click="OpenBackupButton_OnClick" HorizontalAlignment="Left" VerticalAlignment="Top" Width="150" Margin="190,245,0,0"/>
         <Button x:Name="DeleteBackupButton" Click="DeleteBackupButton_OnClick" Content="Delete All Backups" HorizontalAlignment="Left" Background="Red" Foreground="Black" VerticalAlignment="Top" Width="180" Margin="30,290,0,0"/>
         <Button x:Name="RestoreBackupButton" Content="Restore Selected Backup" Click="RestoreBackupButton_OnClick"  HorizontalAlignment="Left" Margin="345,210,0,0" VerticalAlignment="Top" Width="150"/>
 
-        <TextBox x:Name="SaveTextbox" HorizontalAlignment="Left"  PreviewMouseLeftButtonDown="SaveTextbox_Click" ToolTip="This is usually found in My Documents/My Games/XCOM2/XComGame/SaveData. For WOTC the folder name is XCOM2 War of the Chosen." Height="25" Margin="270,25,30,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="300"/>
-        <TextBox x:Name="BackupTextbox" HorizontalAlignment="Left" PreviewMouseLeftButtonUp="BackupTextbox_Click" Height="25" TextWrapping="Wrap"  Text="" VerticalAlignment="Top" Width="300" Margin="270,60,30,0"/>
-        <TextBox x:Name="RestoreBackupText" HorizontalAlignment="Left" PreviewMouseLeftButtonDown="RestoreBackupText_OnPreviewMouseLeftButtonDown" Margin="270,165,30,0" VerticalAlignment="Top" Width="300"/>
+        <TextBox x:Name="SaveTextbox"  PreviewMouseLeftButtonDown="SaveTextbox_Click" ToolTip="This is usually found in My Documents/My Games/XCOM2/XComGame/SaveData. For WOTC the folder name is XCOM2 War of the Chosen." Height="25" Margin="200,25,30,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="450" FontSize="10"/>
+        <TextBox x:Name="BackupTextbox" PreviewMouseLeftButtonUp="BackupTextbox_Click" Height="25" TextWrapping="Wrap"  Text="" VerticalAlignment="Top" Width="450" Margin="200,60,30,0" FontSize="10"/>
+        <TextBox x:Name="RestoreBackupText" PreviewMouseLeftButtonDown="RestoreBackupText_OnPreviewMouseLeftButtonDown" Margin="200,165,30,0" VerticalAlignment="Top" Width="450" Height="25" FontSize="10"/>
 
-        <CheckBox x:Name="OnEventSaves" IsEnabled= "False" Content="Enable Event Driven Saves" Click="OnEventSaves_OnClick" ToolTip="Instead of backups occuring on an interval, a backup occurs every time the save file changes." HorizontalAlignment="Left" Margin="350,245,0,0" VerticalAlignment="Top" Width="175"/>
+        <CheckBox x:Name="OnEventSaves" IsEnabled= "True" Content="Enable Event Driven Saves" Click="OnEventSaves_OnClick" ToolTip="Instead of backups occuring on an interval, a backup occurs every time the save file changes." HorizontalAlignment="Left" Margin="350,245,0,0" VerticalAlignment="Top" Width="175"/>
 
 
         <TextBox x:Name="IntervalTextbox" HorizontalAlignment="Left" Height="25" TextWrapping="Wrap"  Text="{Binding ElementName=IntervalSlider, Path=Value,UpdateSourceTrigger=PropertyChanged}" IsReadOnly="True" VerticalAlignment="Top" Width="70" Margin="500,95,30,0"/>
