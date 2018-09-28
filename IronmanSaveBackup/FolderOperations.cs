@@ -1,25 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.IO;
+using System.Windows;
+using IronmanSaveBackup.Properties;
 
 namespace IronmanSaveBackup
 {
-    class FolderOperations
+    internal class FolderOperations
     {
         public static void OpenFolder(string path)
         {
             if (Directory.Exists(path))
             {
                 System.Diagnostics.Process.Start(path);
-
             }
             else
             {
-                MessageOperations.UserMessage("No folder selected, or the selected folder does not exist.", MessageOperations.MessageTypeEnum.DoesNotExistError);
+                MessageOperations.UserMessage(Resources.FolderNotFound, MessageOperations.MessageTypeEnum.DoesNotExistError);
             }
+        }
+
+        private FolderOperations()
+        {
+
         }
     }
 }

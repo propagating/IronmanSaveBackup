@@ -1,18 +1,10 @@
-﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
+﻿using IronmanSaveBackup.Properties;
+using System;
 using System.IO;
 using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Security.RightsManagement;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Forms;
-using System.Windows.Threading;
-using System.Xaml.Schema;
-using IronmanSaveBackup.Properties;
 
 namespace IronmanSaveBackup
 {
@@ -28,11 +20,11 @@ namespace IronmanSaveBackup
         public CancellationTokenSource CancelBackupSource { get; set; }
         private bool _backupActive { get; set; }
 
-        private Regex SavePattern { get; set; }
+        private Regex SavePattern { get; }
 
         public bool BackupActive
         {
-            get { return _backupActive; }
+            get => _backupActive;
             set
             {
                 _backupActive = value; 
@@ -49,20 +41,11 @@ namespace IronmanSaveBackup
 
         public DateTime? LastUpdated
         {
-            get { return _lastUpdated; }
+            get => _lastUpdated;
             set
             {
                 _lastUpdated = value;
-                if (value == null)
-                {
-                    MainWindow.mainWindow.recentBackup = "Backup Failed";
-                }
-                else
-                {
-
-                    MainWindow.mainWindow.recentBackup = $"Campaign {this.Campaign} @ {value}";
-
-                }
+                MainWindow.mainWindow.RecentBackup = value == null ? "Backup Failed" : $"Campaign {this.Campaign} @ {value}";
             }
         }
 
@@ -95,19 +78,20 @@ namespace IronmanSaveBackup
             if (this.Campaign == -1)
             {
                 MessageOperations.UserMessage(
-                    "Could not determine the Campaign that this backup belongs to. Backup was not restored.",
+                    Resources.CampaignNotFound,
                     MessageOperations.MessageTypeEnum.RestoreError);
             }
             try
             {
                 File.Copy(this.RestoreFile, restorePath, true);
-                MessageOperations.UserMessage($"Successfully restored save for Campaign {this.Campaign}",
+                MessageOperations.UserMessage(
+                    string.Format(Resources.SaveRestoredSuccess, this.Campaign),
                     MessageOperations.MessageTypeEnum.RestoreSuccess);
             }
             catch (IOException)
             {
                 MessageOperations.UserMessage(
-                    "Could not restore the selected backup because the Ironman Save and/or the Backup Save is in use.",
+                    Resources.FileInUse,
                     MessageOperations.MessageTypeEnum.FileInUseError);
             }
         }
@@ -124,12 +108,12 @@ namespace IronmanSaveBackup
                 this.Campaign = GetCampaignFromFileName(fileName.Name);
                 if (this.Campaign == -1)
                 {
-                    MessageOperations.UserMessage("Could not determine the Campaign for the Ironman Saves Found.",
+                    MessageOperations.UserMessage(Resources.CampaignNotFound,
                         MessageOperations.MessageTypeEnum.BackupError);
                     return null;
                 }
 
-                //Create our backup directory and filenames
+                //Create our backup directory and file names
                 var backupFileName = BuildBackupName();
                 var backupChildDirectory = BuildBackupLocation();
                 var backupFullName = Path.Combine(backupChildDirectory, backupFileName);
@@ -138,12 +122,13 @@ namespace IronmanSaveBackup
                 {
                     File.Copy(fileName.FullName, backupFullName, false);
 
-                    //Only delete additional backups if the new backup was copied sucesfully
+                    //Only delete additional backups if the new backup was copied successfully
                     if (this.MaxBackups > 0)
                     {
                         DeleteAdditionalBackups(backupChildDirectory);
                     }
-                    MessageOperations.UserMessage($"Successfully created backup for Campaign {this.Campaign}",
+                    MessageOperations.UserMessage(
+                        string.Format(Resources.BackupCreatedSuccess, this.Campaign),
                         MessageOperations.MessageTypeEnum.BackupSuccess);
                     return DateTime.Now;
                 }
@@ -153,7 +138,7 @@ namespace IronmanSaveBackup
                     return null;
                 }
             }
-            MessageOperations.UserMessage("No Ironman Saves found in the selected location.",
+            MessageOperations.UserMessage(Resources.NoIronmanSaves,
                 MessageOperations.MessageTypeEnum.BackupError);
             return null;
         }
@@ -162,7 +147,7 @@ namespace IronmanSaveBackup
         {
             var backupChildInfo = new DirectoryInfo(backupChildDirectory);
             var backupFiles = backupChildInfo.GetFiles().OrderBy(x => x.CreationTime).ToList();
-            var numToDelete = backupFiles.Count() - this.MaxBackups;
+            var numToDelete = backupFiles.Count - this.MaxBackups;
             if (numToDelete <= 0) return;
             foreach (var file in backupFiles.Take(numToDelete).ToList())
             {
@@ -170,7 +155,7 @@ namespace IronmanSaveBackup
             }
         }
 
-        private int GetCampaignFromFileName(string fileName)
+        private static int GetCampaignFromFileName(string fileName)
         {
             var regex = new Regex(@"^save_IRONMAN- Campaign (.*)$");
             var match = regex.Match(fileName);
@@ -197,7 +182,7 @@ namespace IronmanSaveBackup
         private string BuildRestoreName()
         {
             this.Campaign = GetCampaignFromBackup();
-            return $@"save_IRONMAN- Campaign {this.Campaign}";
+            return string.Format(Resources.SaveRestoreName, this.Campaign);
         }
 
         private string BuildBackupLocation()
@@ -213,7 +198,7 @@ namespace IronmanSaveBackup
             return childDirectory;
         }
 
-        private string BuildBackupName()
+        private static string BuildBackupName()
         {
             return $@"{DateTime.Now:yyyy-dd-MM-HH-mm-ss}.isb";
         }
@@ -231,8 +216,7 @@ namespace IronmanSaveBackup
             }
             else
             {
-                TimeSpan interval;
-                interval = TimeSpan.FromMinutes(this.BackupInterval);
+                var interval = TimeSpan.FromMinutes(this.BackupInterval);
                 while (!cancellationToken.IsCancellationRequested)
                 {
                     this.LastUpdated = CreateBackup();
@@ -240,7 +224,7 @@ namespace IronmanSaveBackup
                     {
                         await Task.Delay(interval, cancellationToken);
                     }
-                    catch (TaskCanceledException e)
+                    catch (TaskCanceledException)
                     {
                         this.BackupActive = false;
                     }
@@ -258,7 +242,7 @@ namespace IronmanSaveBackup
                                        NotifyFilters.LastWrite | NotifyFilters.Attributes | NotifyFilters.Size | NotifyFilters.LastWrite;
 
                 watcher.Filter = "save_IRONMAN*";
-                watcher.Changed += new FileSystemEventHandler(OnEvent);
+                watcher.Changed += OnEvent;
                 watcher.EnableRaisingEvents = true;
                 while (this.BackupActive)
                 {
@@ -281,7 +265,7 @@ namespace IronmanSaveBackup
 
             if (fileName == null)
             {
-                MessageOperations.UserMessage("No Ironman Saves Found. Backup Operation Stopped.",
+                MessageOperations.UserMessage(Resources.NoIronmanSaves,
                     MessageOperations.MessageTypeEnum.BackupError);
                 ResetBackup();
                 return null;
@@ -290,13 +274,13 @@ namespace IronmanSaveBackup
             if (this.Campaign == -1)
             {
                 MessageOperations.UserMessage(
-                    "Could not determine the Campaign for the Ironman Saves Found. Backup operation stopped.",
+                    Resources.CampaignNotFound,
                     MessageOperations.MessageTypeEnum.BackupError);
                 ResetBackup();
                 return null;
             }
 
-            //Create our backup directory and filenames
+            //Create our backup directory and file names
             var backupFileName = BuildBackupName();
             var backupChildDirectory = BuildBackupLocation();
             var backupFullName = Path.Combine(backupChildDirectory, backupFileName);
@@ -314,7 +298,7 @@ namespace IronmanSaveBackup
             }
             catch (Exception)
             {
-                MessageOperations.UserMessage("Exception occured. Backup operation stopped.",
+                MessageOperations.UserMessage(Resources.AutoBackupException,
                     MessageOperations.MessageTypeEnum.BackupError);
                ResetBackup();
                 return null;

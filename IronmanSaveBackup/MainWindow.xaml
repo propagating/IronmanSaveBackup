@@ -12,38 +12,42 @@
             <ColumnDefinition Width="9*"/>
         </Grid.ColumnDefinitions>
         <Label x:Name="SaveLocationLabel" Content="Ironman Save Location" HorizontalAlignment="Left" Margin="30,25,0,0" VerticalAlignment="Top"/>
-        <Label x:Name="BackupLocationLabel" Content="Backup Location" HorizontalAlignment="Left" Margin="30,60,0,0" VerticalAlignment="Top"/>
-        <Label x:Name="IntervalLabel" Content="Backup Interval (Minutes)" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="30,95,0,0"/>
-        <Label x:Name="NumToKeepLabel" Content="Backups to Keep" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="30,130,0,0"/>
-        <Label x:Name="RestoreBackupLabel" Content="Restore Backup" HorizontalAlignment="Left" Margin="30,165,0,0" VerticalAlignment="Top" Width="100"/>
-        <Label x:Name="MostRecentBackup" x:FieldModifier="public" Content="N/A" IsEnabled="False" HorizontalContentAlignment="Center"  HorizontalAlignment="Left" Margin="190,278,0,5" VerticalAlignment='Top' Width="250" Grid.ColumnSpan="2"/>
-        <Label x:Name="MostRecentLabel" Content="Most Recent Backup" HorizontalAlignment="Left" Margin="30,278,0,0" VerticalAlignment="Top" Width="150"/>
+        <Label Grid.Column="0" x:Name="BackupLocationLabel" Content="Backup Location" HorizontalAlignment="Left" Margin="30,60,0,0" VerticalAlignment="Top"/>
+        <Label Grid.Column="0" x:Name="IntervalLabel" Content="Backup Interval (Minutes)" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="30,95,0,0"/>
+        <Label Grid.Column="0" x:Name="NumToKeepLabel" Content="Backups to Keep" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="30,130,0,0"/>
+        <Label Grid.Column="0" x:Name="RestoreBackupLabel" Content="Restore Backup" HorizontalAlignment="Left" Margin="30,165,0,0" VerticalAlignment="Top" Width="100"/>
+        <Label x:Name="MostRecentBackup" x:FieldModifier="public" Content="N/A" IsEnabled="False" HorizontalContentAlignment="Center"  HorizontalAlignment="Left" Margin="190,278,0,5" VerticalAlignment='Top' Width="250" Grid.ColumnSpan="2"
+               Grid.Column="0" />
+        <Label Grid.Column="0" x:Name="MostRecentLabel" Content="Most Recent Backup" HorizontalAlignment="Left" Margin="30,278,0,0" VerticalAlignment="Top" Width="150"/>
 
-        <Button x:Name="StartButton" Content="Start Backup" Click="StartButton_OnClick" HorizontalAlignment="Left" VerticalAlignment="Top" Width="100" Margin="30,210,0,0"/>
-        <Button x:Name="StopButton" Content="Stop Backup" Click="StopButton_OnClick" IsEnabled="False" HorizontalAlignment="Left" VerticalAlignment="Top" Width="100" Margin="135,210,0,0"/>
+        <Button Grid.Column="0" x:Name="StartButton" Content="Start Backup" Click="StartButton_OnClick" HorizontalAlignment="Left" VerticalAlignment="Top" Width="100" Margin="30,210,0,0"/>
+        <Button Grid.Column="0" x:Name="StopButton" Content="Stop Backup" Click="StopButton_OnClick" IsEnabled="False" HorizontalAlignment="Left" VerticalAlignment="Top" Width="100" Margin="135,210,0,0"/>
 
-        <Button x:Name="ForceBackupButton" Content="Force Backup" Click="ForceBackupButton_OnClick" HorizontalAlignment="Left" Margin="240,210,0,0" VerticalAlignment="Top" Width="100" Grid.ColumnSpan="2"/>
-        <Button x:Name="OpenSaveButton" Content="Open Save Directory" Click="OpenSaveButton_OnClick"  HorizontalAlignment="Left" VerticalAlignment="Top" Width="150" Margin="30,245,0,0"/>
-        <Button x:Name="OpenBackupButton" Content="Open Backup Directory" Click="OpenBackupButton_OnClick" HorizontalAlignment="Left" VerticalAlignment="Top" Width="150" Margin="190,245,0,0" Grid.ColumnSpan="2"/>
+        <Button x:Name="ForceBackupButton" Content="Force Backup" Click="ForceBackupButton_OnClick" HorizontalAlignment="Left" Margin="240,210,0,0" VerticalAlignment="Top" Width="100" Grid.ColumnSpan="2"
+                Grid.Column="0" />
+        <Button Grid.Column="0" x:Name="OpenSaveButton" Content="Open Save Directory" Click="OpenSaveButton_OnClick"  HorizontalAlignment="Left" VerticalAlignment="Top" Width="150" Margin="30,245,0,0"/>
+        <Button x:Name="OpenBackupButton" Content="Open Backup Directory" Click="OpenBackupButton_OnClick" HorizontalAlignment="Left" VerticalAlignment="Top" Width="150" Margin="190,245,0,0" Grid.ColumnSpan="2"
+                Grid.Column="0" />
         <Button x:Name="DeleteBackupButton" Click="DeleteBackupButton_OnClick" Content="Delete All Backups" HorizontalAlignment="Left" Background="Red" Foreground="Black" VerticalAlignment="Top" Width="160" Margin="250,210,0,0" Grid.Column="1"/>
         <Button x:Name="RestoreBackupButton" Content="Restore Selected Backup" Click="RestoreBackupButton_OnClick"  HorizontalAlignment="Left" Margin="94.936,210,0,0" VerticalAlignment="Top" Width="150" Grid.Column="1"/>
 
-        <TextBox x:Name="SaveTextbox"  PreviewMouseLeftButtonDown="SaveTextbox_Click" ToolTip="This is usually found in My Documents/My Games/XCOM2/XComGame/SaveData. For WOTC the folder name is XCOM2 War of the Chosen." Height="25" Margin="210,25,40,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="450" FontSize="10" Grid.ColumnSpan="2"/>
-        <TextBox x:Name="BackupTextbox" PreviewMouseLeftButtonUp="BackupTextbox_Click" Height="25" TextWrapping="Wrap"  Text="" VerticalAlignment="Top" Width="450" Margin="210,60,40,0" FontSize="10" Grid.ColumnSpan="2"/>
-        <TextBox x:Name="RestoreBackupText" PreviewMouseLeftButtonDown="RestoreBackupText_OnPreviewMouseLeftButtonDown" Margin="210,165,40,0" VerticalAlignment="Top" Width="450" Height="25" FontSize="10" Grid.ColumnSpan="2"/>
+        <TextBox x:Name="SaveTextbox"  PreviewMouseLeftButtonDown="SaveTextbox_Click" ToolTip="This is usually found in My Documents/My Games/XCOM2/XComGame/SaveData. For WOTC the folder name is XCOM2 War of the Chosen." Height="25" Margin="210,25,40,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="450" FontSize="10" Grid.ColumnSpan="2"
+                 Grid.Column="0" />
+        <TextBox x:Name="BackupTextbox" PreviewMouseLeftButtonUp="BackupTextbox_Click" Height="25" TextWrapping="Wrap"  Text="" VerticalAlignment="Top" Width="450" Margin="210,60,40,0" FontSize="10" Grid.ColumnSpan="2"
+                 Grid.Column="0" />
+        <TextBox x:Name="RestoreBackupText" PreviewMouseLeftButtonDown="RestoreBackupText_OnPreviewMouseLeftButtonDown" Margin="210,165,40,0" VerticalAlignment="Top" Width="450" Height="25" FontSize="10" Grid.ColumnSpan="2"
+                 Grid.Column="0" />
 
         <CheckBox x:Name="OnEventSaves" IsEnabled= "True" Content="Enable Event Driven Saves" Click="OnEventSaves_OnClick" ToolTip="Instead of backups occuring on an interval, a backup occurs every time the save file changes." HorizontalAlignment="Left" Margin="99.936,245,0,0" VerticalAlignment="Top" Width="175" Grid.Column="1"/>
 
 
         <TextBox x:Name="IntervalTextbox" HorizontalAlignment="Left" Height="25" TextWrapping="Wrap"  Text="{Binding ElementName=IntervalSlider, Path=Value,UpdateSourceTrigger=PropertyChanged}" IsReadOnly="True" VerticalAlignment="Top" Width="70" Margin="339.936,95,0,0" Grid.Column="1"/>
-        <Slider x:Name="IntervalSlider" Minimum="1" Maximum="60" TickFrequency="1" ValueChanged="IntervalSlider_OnValueChanged" IsSnapToTickEnabled="True"  IsMoveToPointEnabled="True" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="210,95,0,0" Width="375" Grid.ColumnSpan="2"/>
+        <Slider x:Name="IntervalSlider" Minimum="1" Maximum="60" TickFrequency="1" ValueChanged="IntervalSlider_OnValueChanged" IsSnapToTickEnabled="True"  IsMoveToPointEnabled="True" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="210,95,0,0" Width="375" Grid.ColumnSpan="2"
+                Grid.Column="0" />
 
         <TextBox x:Name="MaxBackupTextbox" HorizontalAlignment="Left" Height="25" TextWrapping="Wrap" Text="{Binding ElementName=MaxBackupSlider, Path=Value, UpdateSourceTrigger=PropertyChanged}" IsReadOnly="True" VerticalAlignment="Top" Width="70" Margin="339.936,130,0,0" Grid.Column="1"/>
-        <Slider x:Name="MaxBackupSlider" ToolTip="Select 0 to keep all backups. When the limit is reached the oldest backup will be deleted." Minimum="0" Maximum="20" TickFrequency="1" ValueChanged="BackupKeepSlider_OnValueChanged"  IsSnapToTickEnabled="True" IsMoveToPointEnabled="True"  HorizontalAlignment="Left" VerticalAlignment="Top" Margin="210,130,0,0" Width="375" Grid.ColumnSpan="2"/>
-
-
-
-
+        <Slider x:Name="MaxBackupSlider" ToolTip="Select 0 to keep all backups. When the limit is reached the oldest backup will be deleted." Minimum="0" Maximum="20" TickFrequency="1" ValueChanged="BackupKeepSlider_OnValueChanged"  IsSnapToTickEnabled="True" IsMoveToPointEnabled="True"  HorizontalAlignment="Left" VerticalAlignment="Top" Margin="210,130,0,0" Width="375" Grid.ColumnSpan="2"
+                Grid.Column="0" />
     </Grid>
 
 </Window>

@@ -114,4 +114,94 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="FolderNotFound" xml:space="preserve">
+    <value>The folder you selected does not exist or cannot be found.</value>
+  </data>
+  <data name="FilepathNotFound" xml:space="preserve">
+    <value>No filepath found for the selected backup.</value>
+  </data>
+  <data name="UnableToDelete" xml:space="preserve">
+    <value>Could not remove all backups in selected folder.</value>
+  </data>
+  <data name="ExceptionOnDelete" xml:space="preserve">
+    <value>An exception occurred while trying to delete existing backups. Please close XCOM 2, restart this application, and try again.</value>
+  </data>
+  <data name="DeleteAllSuccess" xml:space="preserve">
+    <value>All Backups Successfully Deleted.</value>
+  </data>
+  <data name="InvalidRestoreFile" xml:space="preserve">
+    <value>You've selected an invalid file for restoration.</value>
+  </data>
+  <data name="MissingRestoreFile" xml:space="preserve">
+    <value>The file selected for restoration does not exist.</value>
+  </data>
+  <data name="CampaignNotFound" xml:space="preserve">
+    <value>Could not determine the Campaign that this backup belongs to. Backup was not restored.</value>
+  </data>
+  <data name="SaveRestoredSuccess" xml:space="preserve">
+    <value>Successfully restored save for Campaign {0}</value>
+  </data>
+  <data name="FileInUse" xml:space="preserve">
+    <value>Could not restore the selected backup because the Ironman Save and/or the Backup Save is in use.</value>
+  </data>
+  <data name="BackupCreatedSuccess" xml:space="preserve">
+    <value>Successfully created backup for Campaign {0}</value>
+  </data>
+  <data name="NoIronmanSaves" xml:space="preserve">
+    <value>No Ironman Saves found in the selected location.</value>
+  </data>
+  <data name="SaveRestoreName" xml:space="preserve">
+    <value>save_IRONMAN- Campaign {0}</value>
+  </data>
+  <data name="AutoBackupException" xml:space="preserve">
+    <value>Exception occurred. Backup operation stopped.</value>
+  </data>
+  <data name="DeleteAllBackupWarning" xml:space="preserve">
+    <value>Choosing 'Yes' will DELETE ALL BACKUPS in your backups folder. This is NOT reversible.</value>
+  </data>
+  <data name="DeleteAllBackupCaption" xml:space="preserve">
+    <value>Delete All Backups?</value>
+  </data>
+  <data name="ReplaceExistingWarning" xml:space="preserve">
+    <value>Choosing 'Yes' will replace the existing Ironman Save for this campaign. Please ensure you have a backup of your current save prior to recovery.</value>
+  </data>
+  <data name="ReplaceExistingCaption" xml:space="preserve">
+    <value>Restore Backup?</value>
+  </data>
+  <data name="InvalidChoiceWarning" xml:space="preserve">
+    <value>The choice you selected is invalid.</value>
+  </data>
+  <data name="InvalidChoiceCaption" xml:space="preserve">
+    <value>Operation Cancelled</value>
+  </data>
+  <data name="CloseBoxWarning" xml:space="preserve">
+    <value>Are you sure you want to close this box?</value>
+  </data>
+  <data name="FolderNotFoundCaption" xml:space="preserve">
+    <value>No File/Folder Selected</value>
+  </data>
+  <data name="InvalidPathCaption" xml:space="preserve">
+    <value>Invalid Path Error</value>
+  </data>
+  <data name="InUseCaption" xml:space="preserve">
+    <value>File In Use</value>
+  </data>
+  <data name="BackupErrorCaption" xml:space="preserve">
+    <value>Backup Error</value>
+  </data>
+  <data name="RestoreErrorCaption" xml:space="preserve">
+    <value>Restore Error</value>
+  </data>
+  <data name="GeneralErrorCaption" xml:space="preserve">
+    <value>An Error Occurred</value>
+  </data>
+  <data name="BackupSuccessCaption" xml:space="preserve">
+    <value>Backup Operation Successful</value>
+  </data>
+  <data name="RestoreSuccessCaption" xml:space="preserve">
+    <value>Restoration Successful</value>
+  </data>
+  <data name="WeridCaption" xml:space="preserve">
+    <value>Something Weird Happened</value>
+  </data>
 </root>
