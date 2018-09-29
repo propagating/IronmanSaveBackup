@@ -12,18 +12,18 @@
 4. Choose one of the following methods:
 
 
-### Event Driven Saves (Recommended Version)
+#### Event Driven Saves (Recommended Version)
 1. Click 'Enable Event Drive Saves' Checkbox
 2. Click Start Backup
 3. Play the game! 
 
 Note: A backup will be automatically created each time XCOM2/WotC updates the save.
 
-### Manual Saves
+#### Manual Saves
 1. Click Force Backup
 2. Play the game!
 
-### Interval Saves
+#### Interval Saves
 1. Set the Interval
 2. Click Start Backup
 3. Play the game!
@@ -41,7 +41,6 @@ Note: To restore a deleted save, you may need to restart XCOM2/WotC before it sh
 This will work on any XOCM2/WotC Ironman Save. It will not work on EU/EW, but I'm exploring a way to backup those as well. It works with any and all mods. This tool could be extneded to work with any game that has Ironman Capability, but that's a future project.
 
 ## History
-
 This project is designed to be a tool for creating automatic backups, and restoring those backups, of Ironman save games.
 
 It's initial purpose is the protection of XCOM 2 save games (working with any version of the game), as Ironman tends to cause unrecoverable crashes and heartache for many players.
