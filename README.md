@@ -2,21 +2,22 @@
 ### Instructions
 1. Set the Save Location to the directory that stores your XCOM2/WotC Ironman Saves
 2. Set the Backup Location to a directory of your choosing
-3. Set backups to keep to an appropriate value. A value of 0 means to keep all backups. Oldest backups are deleted first if the limit is reached.
+3. Set Backups to Keep to to an appropriate value. A value of 0 keeps all backups. Oldest backups are deleted first if the limit is reached. This is limits the backups to keep per campaign, not a combined total of all backups.
+4. Choose one of the following methods:
 
 
-#### Event Driven Saves (Recommended Version)
+##### Event Driven Saves (Recommended Version)
 1. Click 'Enable Event Drive Saves' Checkbox
 2. Click Start Backup
 3. Play the game! 
 
 Note: A backup will be automatically created each time XCOM2/WotC updates the save.
 
-#### Manual Saves
+##### Manual Saves
 1. Click Force Backup
 2. Play the game!
 
-#### Interval Saves
+##### Interval Saves
 1. Set the Interval
 2. Click Start Backup
 3. Play the game!
