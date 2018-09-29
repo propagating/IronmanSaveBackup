@@ -1,4 +1,8 @@
 # IronmanSaveBackup
+
+## Dependencies
+1. .NET Framework 4.6.1 - https://www.microsoft.com/en-us/download/details.aspx?id=49981
+
 ### Instructions
 1. Set the Save Location to the directory that stores your XCOM2/WotC Ironman Saves
 2. Set the Backup Location to a directory of your choosing
