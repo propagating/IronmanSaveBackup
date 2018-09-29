@@ -38,7 +38,9 @@ Note: Backups will be created on each interval, so if you have a short interval,
 Note: To restore a deleted save, you may need to restart XCOM2/WotC before it shows up
 
 ## Compatibility
-This will work on any XOCM2/WotC Ironman Save. It will not work on EU/EW, but I'm exploring a way to backup those as well. It works with any and all mods. This tool could be extneded to work with any game that has Ironman Capability, but that's a future project.
+Currently, this is Windows only, supproting everything from Windows 7SP1 forward. OSX Sierra and Linux support are on the radar, but no definitive date as of yet.
+
+This will work on any XOCM2/WotC Ironman Save. It works with any and all mods. This tool could be extended to work with any game that has Ironman Capability, but that's a future project. It will not work on EU/EW, but I'm exploring those saves a bit as well. Right now, the hard part is differentiating Ironman saves from normal saves for EU/EW.
 
 ## History
 This project is designed to be a tool for creating automatic backups, and restoring those backups, of Ironman save games.
@@ -47,6 +49,6 @@ It's initial purpose is the protection of XCOM 2 save games (working with any ve
 
 The tool is built to work with any game that has ironman saves, though that functionality will not be fully tested and integrated for the time being. If the game uses a similar naming scheme to XCOM 2 (save_IRONMAN) then there should be no problems using this tool for that game as well.
 
-This tool is NOT intended to be used for save scumming, and you may run into issues trying to use it as such. This was not really done intentionally, but here are two reasons not to: 1) it's against the spirit of ironman and 2) It's much more difficult to restore a backup from a bad action through this tool than it is just to play with ironman disabled.
+This tool is NOT intended to be used for save scumming, and you may run into issues trying to use it as such. This was not really done intentionally, but here are two reasons not to: 1) it's against the spirit of ironman and 2) It's much more difficult to restore a backup from a bad action through this tool than it is just to play with ironman disabled, or to use a console command.
 
-EDIT: Initially I was concerned about the possibility of making save corruption worse with this tool through repeated backups. This has been shown to be a non-issue through testing against multiple campaigns across XCOM2 and XCOM2: WotC. 
+Initially I was concerned about the possibility of making save corruption worse with this tool through repeated backups. This has been shown to be a non-issue through testing against multiple campaigns across XCOM2 and XCOM2: WotC. This tool does not contribute to save corruption. 
