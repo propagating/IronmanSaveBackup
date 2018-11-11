@@ -7,16 +7,16 @@ namespace IronmanSaveBackup
     {
         public static bool ConfirmChoice(MessageChoiceEnum type)
         {
-            var choice = false;
+            var choice  = false;
             var message = "";
             var caption = "";
             switch (type)
             {
                 //Delete backups
                 case MessageChoiceEnum.DeleteChoice:
-                    message =
+                    message     =
                         Resources.DeleteAllBackupWarning;
-                    caption = Resources.DeleteAllBackupCaption;
+                    caption     = Resources.DeleteAllBackupCaption;
                     break;
                     case MessageChoiceEnum.ReplaceChoice:
                         message =
@@ -28,7 +28,7 @@ namespace IronmanSaveBackup
                         caption = Resources.InvalidChoiceCaption;
                         break;
                 default:
-                    message = Resources.CloseBoxWarning;
+                    message     = Resources.CloseBoxWarning;
                     break;
                         
             }

@@ -18,7 +18,7 @@ namespace IronmanSaveBackup
         public int Campaign { get; set; }
         public string RestoreName { get; set; }
         public CancellationTokenSource CancelBackupSource { get; set; }
-        private bool _backupActive { get; set; }
+        private bool _backupActive;
 
         private Regex SavePattern { get; }
 
@@ -35,7 +35,7 @@ namespace IronmanSaveBackup
             }
         }
 
-        private DateTime? _lastUpdated { get; set; }
+        private DateTime? _lastUpdated;
 
         public bool EventDrivenBackups { get; set; }
 
@@ -45,12 +45,13 @@ namespace IronmanSaveBackup
             set
             {
                 _lastUpdated = value;
-                MainWindow.mainWindow.RecentBackup = value == null ? "Backup Failed" : $"Campaign {this.Campaign} @ {value}";
+                MainWindow._MainWindow.RecentBackup = value == null ? "Backup Failed" : $"Campaign {this.Campaign} @ {value}";
             }
         }
 
         public Backup()
         {
+            CancelBackupSource = new CancellationTokenSource();
             SavePattern = new Regex(@"^save_IRONMAN- Campaign .*$");
         }
 
@@ -61,13 +62,13 @@ namespace IronmanSaveBackup
 
         public void UpdateSettings()
         {
-            Settings.Default.BackupParentFolder = BackupParentFolder;
-            Settings.Default.SaveInterval = BackupInterval;
-            Settings.Default.SaveParentFolder = SaveParentFolder;
-            Settings.Default.MaxBackups = MaxBackups;
+            Settings.Default.BackupParentFolder  = BackupParentFolder;
+            Settings.Default.SaveInterval        = BackupInterval;
+            Settings.Default.SaveParentFolder    = SaveParentFolder;
+            Settings.Default.MaxBackups          = MaxBackups;
             Settings.Default.EnableOnEventBackup = EventDrivenBackups;
-            Settings.Default.LastUpdated = LastUpdated ?? DateTime.MinValue;
-            Settings.Default.MostRecentCampaign = Campaign;
+            Settings.Default.LastUpdated         = LastUpdated ?? DateTime.MinValue;
+            Settings.Default.MostRecentCampaign  = Campaign;
             Settings.Default.Save();
         }
 
@@ -100,8 +101,8 @@ namespace IronmanSaveBackup
         {
             //Grabs the most recently updated IronMan save in the save folder
             var saveDirectoryInfo = new DirectoryInfo(this.SaveParentFolder);
-            var files = saveDirectoryInfo.GetFiles().OrderByDescending(x => x.LastAccessTime).ToList();
-            var fileName = files.FirstOrDefault(x => SavePattern.IsMatch(Path.GetFileName(x.FullName)));
+            var files             = saveDirectoryInfo.GetFiles().OrderByDescending(x => x.LastAccessTime).ToList();
+            var fileName          = files.FirstOrDefault(x => SavePattern.IsMatch(Path.GetFileName(x.FullName)));
 
             if (fileName != null)
             {
@@ -114,9 +115,9 @@ namespace IronmanSaveBackup
                 }
 
                 //Create our backup directory and file names
-                var backupFileName = BuildBackupName();
+                var backupFileName       = BuildBackupName();
                 var backupChildDirectory = BuildBackupLocation();
-                var backupFullName = Path.Combine(backupChildDirectory, backupFileName);
+                var backupFullName       = Path.Combine(backupChildDirectory, backupFileName);
 
                 try
                 {
@@ -146,8 +147,8 @@ namespace IronmanSaveBackup
         private void DeleteAdditionalBackups(string backupChildDirectory)
         {
             var backupChildInfo = new DirectoryInfo(backupChildDirectory);
-            var backupFiles = backupChildInfo.GetFiles().OrderBy(x => x.CreationTime).ToList();
-            var numToDelete = backupFiles.Count - this.MaxBackups;
+            var backupFiles     = backupChildInfo.GetFiles().OrderBy(x => x.CreationTime).ToList();
+            var numToDelete     = backupFiles.Count - this.MaxBackups;
             if (numToDelete <= 0) return;
             foreach (var file in backupFiles.Take(numToDelete).ToList())
             {
@@ -157,8 +158,8 @@ namespace IronmanSaveBackup
 
         private static int GetCampaignFromFileName(string fileName)
         {
-            var regex = new Regex(@"^save_IRONMAN- Campaign (.*)$");
-            var match = regex.Match(fileName);
+            var regex    = new Regex(@"^save_IRONMAN- Campaign (.*)$");
+            var match    = regex.Match(fileName);
             var idString = match.Groups[1].Value;
             int idValue;
             if (int.TryParse(idString, out idValue))
@@ -205,7 +206,6 @@ namespace IronmanSaveBackup
 
         private async void StartBackup()
         {
-            CancelBackupSource = new CancellationTokenSource();
             var cancellationToken = CancelBackupSource.Token;
             if (EventDrivenBackups)
             {
@@ -260,8 +260,8 @@ namespace IronmanSaveBackup
         private DateTime? CreateBackup()
         {
             var saveDirectoryInfo = new DirectoryInfo(this.SaveParentFolder);
-            var files = saveDirectoryInfo.GetFiles().OrderByDescending(x => x.LastAccessTime).ToList();
-            var fileName = files.FirstOrDefault(x => SavePattern.IsMatch(Path.GetFileName(x.FullName)));
+            var files             = saveDirectoryInfo.GetFiles().OrderByDescending(x => x.LastAccessTime).ToList();
+            var fileName          = files.FirstOrDefault(x => SavePattern.IsMatch(Path.GetFileName(x.FullName)));
 
             if (fileName == null)
             {
@@ -281,9 +281,9 @@ namespace IronmanSaveBackup
             }
 
             //Create our backup directory and file names
-            var backupFileName = BuildBackupName();
+            var backupFileName       = BuildBackupName();
             var backupChildDirectory = BuildBackupLocation();
-            var backupFullName = Path.Combine(backupChildDirectory, backupFileName);
+            var backupFullName       = Path.Combine(backupChildDirectory, backupFileName);
 
             try
             {
@@ -307,12 +307,12 @@ namespace IronmanSaveBackup
 
         private void ResetBackup()
         {
-            this.BackupActive = false;
             this.CancelBackupSource.Cancel();
-            MainWindow.mainWindow.SaveTextbox.IsEnabled = true;
-            MainWindow.mainWindow.BackupTextbox.IsEnabled = true;
-            MainWindow.mainWindow.StartButton.IsEnabled = true;
-            MainWindow.mainWindow.StopButton.IsEnabled = false;
+            this.BackupActive                             = false;
+            MainWindow._MainWindow.SaveTextbox.IsEnabled   = true;
+            MainWindow._MainWindow.BackupTextbox.IsEnabled = true;
+            MainWindow._MainWindow.StartButton.IsEnabled   = true;
+            MainWindow._MainWindow.StopButton.IsEnabled    = false;
         }
 
     }
