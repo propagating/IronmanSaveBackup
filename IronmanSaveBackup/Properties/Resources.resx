@@ -150,8 +150,11 @@
   <data name="NoIronmanSaves" xml:space="preserve">
     <value>No Ironman Saves found in the selected location.</value>
   </data>
-  <data name="SaveRestoreName" xml:space="preserve">
+  <data name="SaveRestoreNameWotC" xml:space="preserve">
     <value>save_IRONMAN- Campaign {0}</value>
+  </data>
+  <data name="SaveRestoreNameVanilla" xml:space="preserve">
+    <value>save{0}</value>
   </data>
   <data name="AutoBackupException" xml:space="preserve">
     <value>Exception occurred. Backup operation stopped.</value>

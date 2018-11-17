@@ -304,11 +304,20 @@ namespace IronmanSaveBackup.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to save{0}.
+        /// </summary>
+        internal static string SaveRestoreNameVanilla {
+            get {
+                return ResourceManager.GetString("SaveRestoreNameVanilla", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to save_IRONMAN- Campaign {0}.
         /// </summary>
-        internal static string SaveRestoreName {
+        internal static string SaveRestoreNameWotC {
             get {
-                return ResourceManager.GetString("SaveRestoreName", resourceCulture);
+                return ResourceManager.GetString("SaveRestoreNameWotC", resourceCulture);
             }
         }
         

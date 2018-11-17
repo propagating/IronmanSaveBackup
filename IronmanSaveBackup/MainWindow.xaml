@@ -1,17 +1,16 @@
-﻿<Window x:Class="IronmanSaveBackup.MainWindow"
+﻿<Window x:Name="IronmanSaveBackupMainWindow" x:Class="IronmanSaveBackup.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:IronmanSaveBackup"
         mc:Ignorable="d"
-        Title="Ironman Save Backup" Height="Auto" Width="Auto" SizeToContent="WidthAndHeight" ResizeMode="NoResize" Icon="isb.ico" UseLayoutRounding="False" WindowStyle="ThreeDBorderWindow">
+        Title="Ironman Save Backup" Height="Auto" Width="Auto" SizeToContent="WidthAndHeight" ResizeMode="CanMinimize" Icon="isb.ico" UseLayoutRounding="True" WindowStyle="ThreeDBorderWindow">
     <Grid Width="700">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="5*"/>
             <ColumnDefinition Width="9*"/>
         </Grid.ColumnDefinitions>
-        <Label x:Name="SaveLocationLabel" Content="Ironman Save Location" HorizontalAlignment="Left" Margin="30,25,0,0" VerticalAlignment="Top"/>
+        <Label Grid.Column="0" x:Name="SaveLocationLabel" Content="Ironman Save Location" HorizontalAlignment="Left" Margin="30,25,0,0" VerticalAlignment="Top"/>
         <Label Grid.Column="0" x:Name="BackupLocationLabel" Content="Backup Location" HorizontalAlignment="Left" Margin="30,60,0,0" VerticalAlignment="Top"/>
         <Label Grid.Column="0" x:Name="IntervalLabel" Content="Backup Interval (Minutes)" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="30,95,0,0"/>
         <Label Grid.Column="0" x:Name="NumToKeepLabel" Content="Backups to Keep" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="30,130,0,0"/>
@@ -49,5 +48,4 @@
         <Slider x:Name="MaxBackupSlider" ToolTip="Select 0 to keep all backups. When the limit is reached the oldest backup will be deleted." Minimum="0" Maximum="20" TickFrequency="1" ValueChanged="BackupKeepSlider_OnValueChanged"  IsSnapToTickEnabled="True" IsMoveToPointEnabled="True"  HorizontalAlignment="Left" VerticalAlignment="Top" Margin="210,130,0,0" Width="375" Grid.ColumnSpan="2"
                 Grid.Column="0" />
     </Grid>
-
 </Window>

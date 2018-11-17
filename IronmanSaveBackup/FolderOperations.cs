@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System.Windows;
+using IronmanSaveBackup.Enums;
 using IronmanSaveBackup.Properties;
 
 namespace IronmanSaveBackup
@@ -14,7 +15,7 @@ namespace IronmanSaveBackup
             }
             else
             {
-                MessageOperations.UserMessage(Resources.FolderNotFound, MessageOperations.MessageTypeEnum.DoesNotExistError);
+                MessageOperations.UserMessage(Resources.FolderNotFound, MessageTypeEnum.DoesNotExistError);
             }
         }
 

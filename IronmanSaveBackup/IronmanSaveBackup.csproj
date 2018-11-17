@@ -29,7 +29,8 @@
     <ProductName>Ironman Save Backup</ProductName>
     <PublisherName>Propagation Studios</PublisherName>
     <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
-    <ApplicationRevision>7</ApplicationRevision>
+    <AutorunEnabled>true</AutorunEnabled>
+    <ApplicationRevision>10</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -107,6 +108,9 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Backup.cs" />
+    <Compile Include="Enums\SaveTypeEnum.cs" />
+    <Compile Include="Enums\MessageChoiceEnum.cs" />
+    <Compile Include="Enums\MessageTypeEnum.cs" />
     <Compile Include="FolderOperations.cs" />
     <Compile Include="MessageOperations.cs" />
     <Compile Include="Settings.cs" />
