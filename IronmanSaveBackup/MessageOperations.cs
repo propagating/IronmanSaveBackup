@@ -1,4 +1,5 @@
 ﻿using System.Windows.Forms;
+using IronmanSaveBackup.Enums;
 using IronmanSaveBackup.Properties;
 
 namespace IronmanSaveBackup
@@ -7,45 +8,38 @@ namespace IronmanSaveBackup
     {
         public static bool ConfirmChoice(MessageChoiceEnum type)
         {
-            var choice  = false;
-            var message = "";
+            string message;
             var caption = "";
             switch (type)
             {
-                //Delete backups
                 case MessageChoiceEnum.DeleteChoice:
-                    message     =
-                        Resources.DeleteAllBackupWarning;
+                    message     = Resources.DeleteAllBackupWarning;
                     caption     = Resources.DeleteAllBackupCaption;
                     break;
-                    case MessageChoiceEnum.ReplaceChoice:
-                        message =
-                            Resources.ReplaceExistingWarning;
+
+                case MessageChoiceEnum.ReplaceChoice:
+                        message = Resources.ReplaceExistingWarning;
                         caption = Resources.ReplaceExistingCaption;
                         break;
-                    case MessageChoiceEnum.InvalidChoice:
+
+                case MessageChoiceEnum.InvalidChoice:
                         message = Resources.InvalidChoiceWarning;
                         caption = Resources.InvalidChoiceCaption;
                         break;
+
                 default:
-                    message     = Resources.CloseBoxWarning;
-                    break;
-                        
+                        message = Resources.CloseBoxWarning;
+                        break;
             }
 
-            var buttons = MessageBoxButtons.YesNoCancel;
+            const MessageBoxButtons buttons = MessageBoxButtons.YesNoCancel;
             var result = MessageBox.Show(message, caption, buttons);
-
-            if (result == DialogResult.Yes)
-            {
-                choice=true;
-            }
-            return choice;
+            return (result == DialogResult.Yes);
         }
 
         public static void UserMessage(string message, MessageTypeEnum type = MessageTypeEnum.GenericError)
         {
-            var caption = "";
+            string caption;
             const MessageBoxButtons buttons = MessageBoxButtons.OK;
             switch (type)
             {
@@ -91,24 +85,6 @@ namespace IronmanSaveBackup
           
         }
 
-        public enum MessageTypeEnum
-        {
-            GenericError,
-            DoesNotExistError,
-            InvalidPathError,
-            FileInUseError,
-            BackupError,
-            BackupSuccess,
-            RestoreSuccess,
-            RestoreError
-        }
-
-        public enum MessageChoiceEnum
-        {
-            DeleteChoice,
-            ReplaceChoice,
-            InvalidChoice
-        }
     }
 
 }

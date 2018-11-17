@@ -2,25 +2,49 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using IronmanSaveBackup.Enums;
 
 namespace IronmanSaveBackup
 {
-    internal class Backup
+    public class Backup
     {
         public string BackupParentFolder { get; set; }
-        public string SaveParentFolder { get; set; }
+        private string _saveParentFolder;
+
+        public string SaveParentFolder
+        {
+            get => _saveParentFolder;
+            set
+            {
+                _saveParentFolder = value;
+
+                if (_saveParentFolder.Contains("War of the Chosen"))
+                {
+                    this.SavePattern = new Regex(@"^save_IRONMAN- Campaign .*$");
+                    this._saveType = SaveTypeEnum.WotC;
+                }
+                else
+                {
+                    this.SavePattern = new Regex(@"^save.*$");
+                    this._saveType = SaveTypeEnum.Original;
+                }
+            }
+
+        }
         public string RestoreFile { get; set; }
         public int MaxBackups { get; set; }
         public int BackupInterval { get; set; }
         public int Campaign { get; set; }
         public string RestoreName { get; set; }
+        private SaveTypeEnum _saveType { get; set; }
         public CancellationTokenSource CancelBackupSource { get; set; }
         private bool _backupActive;
 
-        private Regex SavePattern { get; }
+        private Regex SavePattern { get; set; }
 
         public bool BackupActive
         {
@@ -52,7 +76,6 @@ namespace IronmanSaveBackup
         public Backup()
         {
             CancelBackupSource = new CancellationTokenSource();
-            SavePattern = new Regex(@"^save_IRONMAN- Campaign .*$");
         }
 
         ~Backup()
@@ -78,22 +101,16 @@ namespace IronmanSaveBackup
             var restorePath = Path.Combine(this.SaveParentFolder, this.RestoreName);
             if (this.Campaign == -1)
             {
-                MessageOperations.UserMessage(
-                    Resources.CampaignNotFound,
-                    MessageOperations.MessageTypeEnum.RestoreError);
+                MessageOperations.UserMessage(Resources.CampaignNotFound, MessageTypeEnum.RestoreError);
             }
             try
             {
                 File.Copy(this.RestoreFile, restorePath, true);
-                MessageOperations.UserMessage(
-                    string.Format(Resources.SaveRestoredSuccess, this.Campaign),
-                    MessageOperations.MessageTypeEnum.RestoreSuccess);
+                MessageOperations.UserMessage(string.Format(Resources.SaveRestoredSuccess, this.Campaign), MessageTypeEnum.RestoreSuccess);
             }
             catch (IOException)
             {
-                MessageOperations.UserMessage(
-                    Resources.FileInUse,
-                    MessageOperations.MessageTypeEnum.FileInUseError);
+                MessageOperations.UserMessage(Resources.FileInUse, MessageTypeEnum.FileInUseError);
             }
         }
 
@@ -110,7 +127,7 @@ namespace IronmanSaveBackup
                 if (this.Campaign == -1)
                 {
                     MessageOperations.UserMessage(Resources.CampaignNotFound,
-                        MessageOperations.MessageTypeEnum.BackupError);
+                        MessageTypeEnum.BackupError);
                     return null;
                 }
 
@@ -130,17 +147,17 @@ namespace IronmanSaveBackup
                     }
                     MessageOperations.UserMessage(
                         string.Format(Resources.BackupCreatedSuccess, this.Campaign),
-                        MessageOperations.MessageTypeEnum.BackupSuccess);
+                        MessageTypeEnum.BackupSuccess);
                     return DateTime.Now;
                 }
                 catch (Exception)
                 {
-                    MessageOperations.UserMessage("", MessageOperations.MessageTypeEnum.FileInUseError);
+                    MessageOperations.UserMessage("", MessageTypeEnum.FileInUseError);
                     return null;
                 }
             }
             MessageOperations.UserMessage(Resources.NoIronmanSaves,
-                MessageOperations.MessageTypeEnum.BackupError);
+                MessageTypeEnum.BackupError);
             return null;
         }
 
@@ -156,9 +173,10 @@ namespace IronmanSaveBackup
             }
         }
 
-        private static int GetCampaignFromFileName(string fileName)
+        private int GetCampaignFromFileName(string fileName)
         {
-            var regex    = new Regex(@"^save_IRONMAN- Campaign (.*)$");
+            Regex regex;
+            regex = this._saveType == SaveTypeEnum.WotC ? new Regex(@"^save_IRONMAN- Campaign (.*)$") : new Regex(@"^save(.*)$");
             var match    = regex.Match(fileName);
             var idString = match.Groups[1].Value;
             int idValue;
@@ -183,12 +201,29 @@ namespace IronmanSaveBackup
         private string BuildRestoreName()
         {
             this.Campaign = GetCampaignFromBackup();
-            return string.Format(Resources.SaveRestoreName, this.Campaign);
+            return string.Format(this._saveType == SaveTypeEnum.Original ? Resources.SaveRestoreNameVanilla : Resources.SaveRestoreNameWotC, this.Campaign);
         }
 
         private string BuildBackupLocation()
         {
-            var childDirectory = Path.Combine(this.BackupParentFolder, this.Campaign.ToString());
+            string childDirectory;
+
+            if (this.SaveParentFolder.Contains("Enemy Unknown"))
+            {
+                childDirectory = Path.Combine(this.BackupParentFolder,"XEU", this.Campaign.ToString());
+            }
+            else if (this.SaveParentFolder.Contains("Enemy Within"))
+            {
+                childDirectory = Path.Combine(this.BackupParentFolder, "XEW", this.Campaign.ToString());
+            }
+            else if (this.SaveParentFolder.Contains("War of the Chosen"))
+            {
+                childDirectory = Path.Combine(this.BackupParentFolder, "WotC", this.Campaign.ToString());
+            }
+            else
+            {
+                childDirectory = Path.Combine(this.BackupParentFolder, "X2", this.Campaign.ToString());
+            }
 
             if (Directory.Exists(childDirectory))
             {
@@ -241,7 +276,7 @@ namespace IronmanSaveBackup
                 watcher.NotifyFilter = NotifyFilters.CreationTime | NotifyFilters.FileName | NotifyFilters.LastAccess |
                                        NotifyFilters.LastWrite | NotifyFilters.Attributes | NotifyFilters.Size | NotifyFilters.LastWrite;
 
-                watcher.Filter = "save_IRONMAN*";
+                watcher.Filter = this._saveType == SaveTypeEnum.WotC ? "save_IRONMAN*" : "save*";
                 watcher.Changed += OnEvent;
                 watcher.EnableRaisingEvents = true;
                 while (this.BackupActive)
@@ -254,7 +289,7 @@ namespace IronmanSaveBackup
 
         private void OnEvent(object sender, FileSystemEventArgs e)
         {
-                this.LastUpdated = CreateBackup();
+            this.LastUpdated = CreateBackup();
         }
 
         private DateTime? CreateBackup()
@@ -265,17 +300,15 @@ namespace IronmanSaveBackup
 
             if (fileName == null)
             {
-                MessageOperations.UserMessage(Resources.NoIronmanSaves,
-                    MessageOperations.MessageTypeEnum.BackupError);
+                MessageOperations.UserMessage(Resources.NoIronmanSaves,MessageTypeEnum.BackupError);
                 ResetBackup();
                 return null;
             }
             this.Campaign = GetCampaignFromFileName(fileName.Name);
+
             if (this.Campaign == -1)
             {
-                MessageOperations.UserMessage(
-                    Resources.CampaignNotFound,
-                    MessageOperations.MessageTypeEnum.BackupError);
+                MessageOperations.UserMessage(Resources.CampaignNotFound,MessageTypeEnum.BackupError);
                 ResetBackup();
                 return null;
             }
@@ -299,7 +332,7 @@ namespace IronmanSaveBackup
             catch (Exception)
             {
                 MessageOperations.UserMessage(Resources.AutoBackupException,
-                    MessageOperations.MessageTypeEnum.BackupError);
+                    MessageTypeEnum.BackupError);
                ResetBackup();
                 return null;
             }
@@ -308,7 +341,7 @@ namespace IronmanSaveBackup
         private void ResetBackup()
         {
             this.CancelBackupSource.Cancel();
-            this.BackupActive                             = false;
+            this.BackupActive                              = false;
             MainWindow._MainWindow.SaveTextbox.IsEnabled   = true;
             MainWindow._MainWindow.BackupTextbox.IsEnabled = true;
             MainWindow._MainWindow.StartButton.IsEnabled   = true;
