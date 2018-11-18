@@ -1,12 +1,18 @@
 # IronmanSaveBackup
 
+## XEW/XEU/Vanilla XCOM2 Note
+You might have a couple of backups from your non-ironman Campaigns for these 3 versions.
+
+This is because WotC is the only version that makes it easy to identify Ironman from non-Ironman saves. As a result, running this tool along side XEU/XEW/X2 Vanilla will not be able to distinguish which save is ironman or not, and will continue to make backups for the campaign you are currently playing. 
+
+
 ## Dependencies
 1. .NET Framework 4.6.1 - https://www.microsoft.com/en-us/download/details.aspx?id=49981
 
 ## Instructions
 
 ### Configuration
-1. Set the Save Location to the directory that stores your XCOM2/WotC Ironman Saves
+1. Set the Save Location to the directory that stores your XEW/XEU/XCOM2/WotC Ironman Saves
 2. Set the Backup Location to a directory of your choosing
 3. Set Backups to Keep to to an appropriate value. A value of 0 keeps all backups. Oldest backups are deleted first if the limit is reached. This limits the backups to keep per campaign, not a combined total of all backups.
 4. Choose one of the following methods:
@@ -40,7 +46,7 @@ Note: To restore a deleted save, you may need to restart XCOM2/WotC before it sh
 ## Compatibility
 Currently, this is Windows only, supproting everything from Windows 7SP1 forward. OSX Sierra and Linux support are on the radar, but no definitive date as of yet.
 
-This will work on any XOCM2/WotC Ironman Save. It works with any and all mods. This tool could be extended to work with any game that has Ironman Capability, but that's a future project. It will not work on EU/EW, but I'm exploring those saves a bit as well. Right now, the hard part is differentiating Ironman saves from normal saves for EU/EW.
+This will work with XEU, XEW, WOTC, and Vanilla XCOM2. It should work with any and all mods. This tool could be extended to work with any game that has Ironman Capability, but that's a future project. 
 
 ## History
 This project is designed to be a tool for creating automatic backups, and restoring those backups, of Ironman save games.
