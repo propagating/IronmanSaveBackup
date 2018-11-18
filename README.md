@@ -3,7 +3,7 @@
 ## XEW/XEU/Vanilla XCOM2 Note
 You might have a couple of backups from your non-ironman Campaigns for these 3 versions.
 
-This is because WotC is the only version that makes it easy to identify Ironman from non-Ironman saves without looking at the save data directly. As a result, running this tool along side XEU/XEW/X2 Vanilla will not be able to distinguish which save is ironman or not, and will continue to make backups for the campaign you are currently playing. 
+This is because WotC is the only version that makes it easy to identify Ironman from non-Ironman saves without looking at the save data directly. As a result, running this tool along side XEU/XEW/X2 Vanilla will not distinguish if a save is ironman or not, and will continue to make backups for the campaign you are currently playing. WotC will only backup ironman saves.
 
 
 ## Dependencies
