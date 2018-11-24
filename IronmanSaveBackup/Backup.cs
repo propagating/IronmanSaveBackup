@@ -274,7 +274,7 @@ namespace IronmanSaveBackup
             {
                 watcher.Path = SaveParentFolder;
                 watcher.NotifyFilter = NotifyFilters.CreationTime | NotifyFilters.FileName | NotifyFilters.LastAccess |
-                                       NotifyFilters.LastWrite | NotifyFilters.Attributes | NotifyFilters.Size | NotifyFilters.LastWrite;
+                                       NotifyFilters.LastWrite | NotifyFilters.Attributes | NotifyFilters.Size;
 
                 watcher.Filter = this._saveType == SaveTypeEnum.WotC ? "save_IRONMAN*" : "save*";
                 watcher.Changed += OnEvent;
