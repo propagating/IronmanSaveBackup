@@ -1,5 +1,12 @@
 # IronmanSaveBackup
 
+## Chimera Squad Note
+Chimera Squad saves your game much more frequently than XCOM 2 and WotC do. Because of this, I highly recommend limiting the max backups to a relatively managable number (20 should be more than enough). 
+
+Saves in HQ are much smaller than saves made in the field, so you can use that as a better gauge for when to restore a save or not. They also appear to get bigger the longer the mission goes on, but maybe that's just me musing. 
+
+Saves are triggered at different times making it a bit more resilient to the crashes we saw in XCOM 2/WotC but still, same engine means there's still a chacne.
+
 ## XEW/XEU/Vanilla XCOM2 Note
 You might have a couple of backups from your non-ironman Campaigns for these 3 versions.
 
@@ -7,7 +14,7 @@ This is because WotC is the only version that makes it easy to identify Ironman 
 
 
 ## Dependencies
-1. .NET Framework 4.6.1 - https://www.microsoft.com/en-us/download/details.aspx?id=49981
+1. .NET Framework 4.8 - https://dotnet.microsoft.com/download/dotnet-framework/thank-you/net48-web-installer
 
 ## Instructions
 
@@ -46,15 +53,4 @@ Note: To restore a deleted save, you may need to restart XCOM2/WotC before it sh
 ## Compatibility
 Currently, this is Windows only, supproting everything from Windows 7SP1 forward. OSX Sierra and Linux support are on the radar, but no definitive date as of yet.
 
-This will work with XEU, XEW, WOTC, and Vanilla XCOM2. It should work with any and all mods. This tool could be extended to work with any game that has Ironman Capability, but that's a future project. 
-
-## History
-This project is designed to be a tool for creating automatic backups, and restoring those backups, of Ironman save games.
-
-It's initial purpose is the protection of XCOM 2 save games (working with any version of the game), as Ironman tends to cause unrecoverable crashes and heartache for many players.
-
-The tool is built to work with any game that has ironman saves, though that functionality will not be fully tested and integrated for the time being. If the game uses a similar naming scheme to XCOM 2 (save_IRONMAN) then there should be no problems using this tool for that game as well.
-
-This tool is NOT intended to be used for save scumming, and you may run into issues trying to use it as such. This was not really done intentionally, but here are two reasons not to: 1) it's against the spirit of ironman and 2) It's much more difficult to restore a backup from a bad action through this tool than it is just to play with ironman disabled, or to use a console command.
-
-Initially I was concerned about the possibility of making save corruption worse with this tool through repeated backups. This has been shown to be a non-issue through testing against multiple campaigns across XCOM2 and XCOM2: WotC. This tool does not contribute to save corruption. 
+This will work with XEU, XEW, WOTC, XCOM2, and Chimera Squad. It should work with any and all mods. This tool could be extended to work with any game that has Ironman Capability, but that's a future project. 
