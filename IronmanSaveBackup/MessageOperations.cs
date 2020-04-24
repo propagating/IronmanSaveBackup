@@ -10,30 +10,37 @@ namespace IronmanSaveBackup
         {
             string message;
             var caption = "";
+            MessageBoxIcon icon;
+            const MessageBoxButtons buttons = MessageBoxButtons.YesNoCancel;
+            const MessageBoxOptions options = MessageBoxOptions.ServiceNotification;
+            const MessageBoxDefaultButton defaultButton = MessageBoxDefaultButton.Button1;
             switch (type)
             {
                 case MessageChoice.DeleteChoice:
                     message     = Resources.DeleteAllBackupWarning;
                     caption     = Resources.DeleteAllBackupCaption;
+                    icon        = MessageBoxIcon.Exclamation;
                     break;
 
                 case MessageChoice.ReplaceChoice:
-                        message = Resources.ReplaceExistingWarning;
-                        caption = Resources.ReplaceExistingCaption;
-                        break;
+                    message = Resources.ReplaceExistingWarning;
+                    caption = Resources.ReplaceExistingCaption;
+                    icon = MessageBoxIcon.Exclamation;
+                    break;
 
                 case MessageChoice.InvalidChoice:
-                        message = Resources.InvalidChoiceWarning;
-                        caption = Resources.InvalidChoiceCaption;
-                        break;
+                    message = Resources.InvalidChoiceWarning;
+                    caption = Resources.InvalidChoiceCaption;
+                    icon = MessageBoxIcon.Warning;
+                    break;
 
                 default:
-                        message = Resources.CloseBoxWarning;
-                        break;
+                    message = Resources.CloseBoxWarning;
+                    icon = MessageBoxIcon.Warning;
+                    break;
             }
 
-            const MessageBoxButtons buttons = MessageBoxButtons.YesNoCancel;
-            var result = MessageBox.Show(message, caption, buttons);
+            var result = MessageBox.Show(message, caption, buttons, icon, defaultButton, options);
             return (result == DialogResult.Yes);
         }
 
@@ -41,7 +48,7 @@ namespace IronmanSaveBackup
         {
             string caption;
             const MessageBoxButtons buttons = MessageBoxButtons.OK;
-            const MessageBoxOptions options = MessageBoxOptions.RightAlign | MessageBoxOptions.RtlReading;
+            const MessageBoxOptions options = MessageBoxOptions.ServiceNotification;
             switch (type)
             {
                 //Delete backups

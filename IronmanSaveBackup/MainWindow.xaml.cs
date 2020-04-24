@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.IO;
 using System.Windows;
 using System.Windows.Forms;
@@ -168,7 +169,7 @@ namespace IronmanSaveBackup
 
         private void RestoreBackupText_OnPreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            using (var dialog = new OpenFileDialog { Filter = @"Backup Files (*.isb)|*.isb", InitialDirectory = _runningBackup.BackupParentFolder })
+            using (var dialog = new OpenFileDialog { Filter = Properties.Resources.BackupFileFilter, InitialDirectory = _runningBackup.BackupParentFolder })
             {
                 var result = dialog.ShowDialog();
                 if (result == System.Windows.Forms.DialogResult.OK)
@@ -184,7 +185,8 @@ namespace IronmanSaveBackup
         {
             if (_runningBackup.RestoreFile!= null && File.Exists(_runningBackup.RestoreFile))
             {
-                if (Path.GetExtension(_runningBackup.RestoreFile).ToLower() != ".isb")
+                if (!string.Equals(Path.GetExtension(_runningBackup.RestoreFile),
+                    Properties.Resources.FileExtension, StringComparison.InvariantCultureIgnoreCase))
                 {
                     MessageOperations.UserMessage(Properties.Resources.InvalidRestoreFile, MessageType.RestoreError);
                     RestoreBackupText.Text     = "";
