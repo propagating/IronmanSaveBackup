@@ -1,6 +1,6 @@
 ﻿namespace IronmanSaveBackup.Enums
 {
-    public enum MessageTypeEnum
+    public enum MessageType
     {
         GenericError,
         DoesNotExistError,

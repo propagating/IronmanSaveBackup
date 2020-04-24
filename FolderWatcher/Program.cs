@@ -35,7 +35,7 @@ namespace FolderWatcher
         static void Main(string[] args)
         {
             //TODO: Update to the path that your saves are located 
-            var filePath = @"C:\Users\Ryan\Documents\My Games\XCOM2 War of the Chosen\XComGame\SaveData";
+            var filePath = @"C:\Users\Ryan\Documents\My Games\XCOM Chimera Squad\XComGame\SaveData";
             using (var watcher = new FileSystemWatcher())
             {
                 watcher.Path = filePath;
@@ -43,8 +43,10 @@ namespace FolderWatcher
                                        NotifyFilters.LastWrite | NotifyFilters.Attributes | NotifyFilters.Size | NotifyFilters.LastWrite;
 
                 //TODO: Update to the naming scheme of your ironman saves. 
-                watcher.Filter = "save_IRONMAN*";
-                watcher.Changed += new FileSystemEventHandler(OnEvent);
+                watcher.Filter = "*IronMan*";
+                watcher.Changed += OnEvent;
+                watcher.Renamed += OnRename;
+                watcher.Created += OnEvent;
 
 
                 watcher.EnableRaisingEvents = true;
@@ -58,8 +60,11 @@ namespace FolderWatcher
 
         static void OnEvent(object soruce, FileSystemEventArgs e)
         {
-            
-            Console.WriteLine($"File: {e.FullPath} \n{e.ChangeType}\n{e.Name}\n");
+            var fileInfo = new FileInfo(e.FullPath.ToString());
+            Console.WriteLine($"File: {e.FullPath}"); 
+            Console.WriteLine($"Change Type: {e.ChangeType}");
+            Console.WriteLine($"File Name: {e.Name}");
+            Console.WriteLine($"Length: {fileInfo.Length}");
             Console.WriteLine("----------------------------------------");
             Console.WriteLine(DateTime.Now);
             Console.WriteLine("----------------------------------------");

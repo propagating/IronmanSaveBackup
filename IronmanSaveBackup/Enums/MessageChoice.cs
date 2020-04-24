@@ -1,6 +1,6 @@
 ﻿namespace IronmanSaveBackup.Enums
 {
-    public enum MessageChoiceEnum
+    public enum MessageChoice
     {
         DeleteChoice,
         ReplaceChoice,

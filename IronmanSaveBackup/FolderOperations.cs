@@ -15,7 +15,7 @@ namespace IronmanSaveBackup
             }
             else
             {
-                MessageOperations.UserMessage(Resources.FolderNotFound, MessageTypeEnum.DoesNotExistError);
+                MessageOperations.UserMessage(Resources.FolderNotFound, MessageType.DoesNotExistError);
             }
         }
 

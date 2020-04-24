@@ -24,13 +24,18 @@ namespace IronmanSaveBackup
 
                 if (_saveParentFolder.Contains("War of the Chosen"))
                 {
-                    this.SavePattern = new Regex(@"^save_IRONMAN- Campaign .*$");
-                    this._saveType = SaveTypeEnum.WotC;
+                    SavePattern = new Regex(@"^save_IRONMAN- Campaign .*$");
+                    _saveType = SaveType.WotC;
+                }
+                else if (_saveParentFolder.Contains("Chimera Squad"))
+                {
+                    SavePattern = new Regex(@"^.*-IronMan$");
+                    _saveType = SaveType.Chimera;
                 }
                 else
                 {
-                    this.SavePattern = new Regex(@"^save.*$");
-                    this._saveType = SaveTypeEnum.Original;
+                    SavePattern = new Regex(@"^save.*$");
+                    _saveType = SaveType.Original;
                 }
             }
 
@@ -38,9 +43,9 @@ namespace IronmanSaveBackup
         public string RestoreFile { get; set; }
         public int MaxBackups { get; set; }
         public int BackupInterval { get; set; }
-        public int Campaign { get; set; }
+        public long Campaign { get; set; }
         public string RestoreName { get; set; }
-        private SaveTypeEnum _saveType { get; set; }
+        private SaveType _saveType { get; set; }
         public CancellationTokenSource CancelBackupSource { get; set; }
         private bool _backupActive;
 
@@ -69,7 +74,7 @@ namespace IronmanSaveBackup
             set
             {
                 _lastUpdated = value;
-                MainWindow._MainWindow.RecentBackup = value == null ? "Backup Failed" : $"Campaign {this.Campaign} @ {value}";
+                MainWindow._MainWindow.RecentBackup = value == null ? "Backup Failed" : $"Campaign {Campaign} @ {value}";
             }
         }
 
@@ -97,37 +102,37 @@ namespace IronmanSaveBackup
 
         public void RestoreBackup()
         {
-            this.RestoreName = BuildRestoreName();
-            var restorePath = Path.Combine(this.SaveParentFolder, this.RestoreName);
-            if (this.Campaign == -1)
+            RestoreName = BuildRestoreName();
+            var restorePath = Path.Combine(SaveParentFolder, RestoreName);
+            if (Campaign == -1)
             {
-                MessageOperations.UserMessage(Resources.CampaignNotFound, MessageTypeEnum.RestoreError);
+                MessageOperations.UserMessage(Resources.CampaignNotFound, MessageType.RestoreError);
             }
             try
             {
-                File.Copy(this.RestoreFile, restorePath, true);
-                MessageOperations.UserMessage(string.Format(Resources.SaveRestoredSuccess, this.Campaign), MessageTypeEnum.RestoreSuccess);
+                File.Copy(RestoreFile, restorePath, true);
+                MessageOperations.UserMessage(string.Format(Resources.SaveRestoredSuccess, Campaign), MessageType.RestoreSuccess);
             }
             catch (IOException)
             {
-                MessageOperations.UserMessage(Resources.FileInUse, MessageTypeEnum.FileInUseError);
+                MessageOperations.UserMessage(Resources.FileInUse, MessageType.FileInUseError);
             }
         }
 
         public DateTime? ForceCreateBackup()
         {
             //Grabs the most recently updated IronMan save in the save folder
-            var saveDirectoryInfo = new DirectoryInfo(this.SaveParentFolder);
-            var files             = saveDirectoryInfo.GetFiles().OrderByDescending(x => x.LastAccessTime).ToList();
+            var saveDirectoryInfo = new DirectoryInfo(SaveParentFolder);
+            var files         = saveDirectoryInfo.GetFiles().OrderByDescending(x => x.LastAccessTime).ToList();
             var fileName          = files.FirstOrDefault(x => SavePattern.IsMatch(Path.GetFileName(x.FullName)));
 
             if (fileName != null)
             {
-                this.Campaign = GetCampaignFromFileName(fileName.Name);
-                if (this.Campaign == -1)
+                Campaign = GetCampaignFromFileName(fileName.Name);
+                if (Campaign == -1)
                 {
                     MessageOperations.UserMessage(Resources.CampaignNotFound,
-                        MessageTypeEnum.BackupError);
+                        MessageType.BackupError);
                     return null;
                 }
 
@@ -141,23 +146,23 @@ namespace IronmanSaveBackup
                     File.Copy(fileName.FullName, backupFullName, false);
 
                     //Only delete additional backups if the new backup was copied successfully
-                    if (this.MaxBackups > 0)
+                    if (MaxBackups > 0)
                     {
                         DeleteAdditionalBackups(backupChildDirectory);
                     }
                     MessageOperations.UserMessage(
-                        string.Format(Resources.BackupCreatedSuccess, this.Campaign),
-                        MessageTypeEnum.BackupSuccess);
+                        string.Format(Resources.BackupCreatedSuccess, Campaign),
+                        MessageType.BackupSuccess);
                     return DateTime.Now;
                 }
-                catch (Exception)
+                catch (IOException)
                 {
-                    MessageOperations.UserMessage("", MessageTypeEnum.FileInUseError);
+                    MessageOperations.UserMessage("", MessageType.FileInUseError);
                     return null;
                 }
             }
             MessageOperations.UserMessage(Resources.NoIronmanSaves,
-                MessageTypeEnum.BackupError);
+                MessageType.BackupError);
             return null;
         }
 
@@ -165,7 +170,7 @@ namespace IronmanSaveBackup
         {
             var backupChildInfo = new DirectoryInfo(backupChildDirectory);
             var backupFiles     = backupChildInfo.GetFiles().OrderBy(x => x.CreationTime).ToList();
-            var numToDelete     = backupFiles.Count - this.MaxBackups;
+            var numToDelete     = backupFiles.Count - MaxBackups;
             if (numToDelete <= 0) return;
             foreach (var file in backupFiles.Take(numToDelete).ToList())
             {
@@ -173,25 +178,40 @@ namespace IronmanSaveBackup
             }
         }
 
-        private int GetCampaignFromFileName(string fileName)
+        private long GetCampaignFromFileName(string fileName)
         {
             Regex regex;
-            regex = this._saveType == SaveTypeEnum.WotC ? new Regex(@"^save_IRONMAN- Campaign (.*)$") : new Regex(@"^save(.*)$");
+            switch (_saveType)
+            {
+                case SaveType.Original:
+                    regex = new Regex(@"^save(.*)$");
+                    break;
+                case SaveType.WotC:
+                    regex = new Regex(@"^save_IRONMAN- Campaign (.*)$");
+                    break;
+                case SaveType.Chimera:
+                    regex = new Regex(@"^.*?(?=-IronMan)");
+                    break;
+                default:
+                    return -1;
+            } 
+            
             var match    = regex.Match(fileName);
-            var idString = match.Groups[1].Value;
-            int idValue;
-            if (int.TryParse(idString, out idValue))
+            var idString = _saveType == SaveType.Chimera ? match.Value : match.Groups[1].Value;
+            long idValue;
+            if (long.TryParse(idString, out idValue))
             {
                 return idValue;
             }
+
             return -1;
         }
 
-        private int GetCampaignFromBackup()
+        private long GetCampaignFromBackup()
         {
-            var idString = Directory.GetParent(this.RestoreFile).Name;
-            int idValue;
-            if (int.TryParse(idString, out idValue))
+            var idString = Directory.GetParent(RestoreFile).Name;
+            long idValue;
+            if (long.TryParse(idString, out idValue))
             {
                 return idValue;
             }
@@ -200,29 +220,43 @@ namespace IronmanSaveBackup
 
         private string BuildRestoreName()
         {
-            this.Campaign = GetCampaignFromBackup();
-            return string.Format(this._saveType == SaveTypeEnum.Original ? Resources.SaveRestoreNameVanilla : Resources.SaveRestoreNameWotC, this.Campaign);
+            Campaign = GetCampaignFromBackup();
+            switch (_saveType)
+            {
+                case SaveType.Original:
+                    return string.Format(Resources.SaveRestoreNameVanilla, Campaign);
+                case SaveType.WotC:
+                    return string.Format(Resources.SaveRestoreNameWotC, Campaign);
+                case SaveType.Chimera:
+                    return string.Format(Resources.SaveRestoreNameChimera, Campaign);
+                default:
+                    return string.Format(Campaign.ToString());
+            }
         }
 
         private string BuildBackupLocation()
         {
             string childDirectory;
 
-            if (this.SaveParentFolder.Contains("Enemy Unknown"))
+            if (SaveParentFolder.Contains("Enemy Unknown"))
             {
-                childDirectory = Path.Combine(this.BackupParentFolder,"XEU", this.Campaign.ToString());
+                childDirectory = Path.Combine(BackupParentFolder,"XEU", Campaign.ToString());
             }
-            else if (this.SaveParentFolder.Contains("Enemy Within"))
+            else if (SaveParentFolder.Contains("Enemy Within"))
             {
-                childDirectory = Path.Combine(this.BackupParentFolder, "XEW", this.Campaign.ToString());
+                childDirectory = Path.Combine(BackupParentFolder, "XEW", Campaign.ToString());
             }
-            else if (this.SaveParentFolder.Contains("War of the Chosen"))
+            else if (SaveParentFolder.Contains("War of the Chosen"))
             {
-                childDirectory = Path.Combine(this.BackupParentFolder, "WotC", this.Campaign.ToString());
+                childDirectory = Path.Combine(BackupParentFolder, "WotC", Campaign.ToString());
+            }
+            else if (SaveParentFolder.Contains("Chimera Squad"))
+            {
+                childDirectory = Path.Combine(BackupParentFolder, "Chimera Squad", Campaign.ToString());
             }
             else
             {
-                childDirectory = Path.Combine(this.BackupParentFolder, "X2", this.Campaign.ToString());
+                childDirectory = Path.Combine(BackupParentFolder, "X2", Campaign.ToString());
             }
 
             if (Directory.Exists(childDirectory))
@@ -251,17 +285,17 @@ namespace IronmanSaveBackup
             }
             else
             {
-                var interval = TimeSpan.FromMinutes(this.BackupInterval);
+                var interval = TimeSpan.FromMinutes(BackupInterval);
                 while (!cancellationToken.IsCancellationRequested)
                 {
-                    this.LastUpdated = CreateBackup();
+                    LastUpdated = CreateBackup();
                     try
                     {
                         await Task.Delay(interval, cancellationToken);
                     }
                     catch (TaskCanceledException)
                     {
-                        this.BackupActive = false;
+                        BackupActive = false;
                     }
                    
                 }
@@ -274,14 +308,28 @@ namespace IronmanSaveBackup
             {
                 watcher.Path = SaveParentFolder;
                 watcher.NotifyFilter = NotifyFilters.CreationTime | NotifyFilters.FileName | NotifyFilters.LastAccess |
-                                       NotifyFilters.LastWrite | NotifyFilters.Attributes | NotifyFilters.Size | NotifyFilters.LastWrite;
+                                       NotifyFilters.LastWrite | NotifyFilters.Attributes | NotifyFilters.Size;
 
-                watcher.Filter = this._saveType == SaveTypeEnum.WotC ? "save_IRONMAN*" : "save*";
+                watcher.Filter = "";
+                switch (_saveType)
+                {
+                    case SaveType.Original:
+                        watcher.Filter = "save";
+                        break;
+                    case SaveType.WotC:
+                        watcher.Filter = "save_IRONMAN*";
+                        break;
+                    case SaveType.Chimera:
+                        watcher.Filter = "*IronMan*";
+                        break;
+                    default:
+                        watcher.Filter = "*IronMan*";
+                        break;
+                }
                 watcher.Changed += OnEvent;
                 watcher.EnableRaisingEvents = true;
-                while (this.BackupActive)
+                while (BackupActive)
                 {
-
                 }
             }
 
@@ -289,26 +337,26 @@ namespace IronmanSaveBackup
 
         private void OnEvent(object sender, FileSystemEventArgs e)
         {
-            this.LastUpdated = CreateBackup();
+            LastUpdated = CreateBackup();
         }
 
         private DateTime? CreateBackup()
         {
-            var saveDirectoryInfo = new DirectoryInfo(this.SaveParentFolder);
+            var saveDirectoryInfo = new DirectoryInfo(SaveParentFolder);
             var files             = saveDirectoryInfo.GetFiles().OrderByDescending(x => x.LastAccessTime).ToList();
             var fileName          = files.FirstOrDefault(x => SavePattern.IsMatch(Path.GetFileName(x.FullName)));
 
             if (fileName == null)
             {
-                MessageOperations.UserMessage(Resources.NoIronmanSaves,MessageTypeEnum.BackupError);
+                MessageOperations.UserMessage(Resources.NoIronmanSaves,MessageType.BackupError);
                 ResetBackup();
                 return null;
             }
-            this.Campaign = GetCampaignFromFileName(fileName.Name);
+            Campaign = GetCampaignFromFileName(fileName.Name);
 
-            if (this.Campaign == -1)
+            if (Campaign == -1)
             {
-                MessageOperations.UserMessage(Resources.CampaignNotFound,MessageTypeEnum.BackupError);
+                MessageOperations.UserMessage(Resources.CampaignNotFound,MessageType.BackupError);
                 ResetBackup();
                 return null;
             }
@@ -323,16 +371,16 @@ namespace IronmanSaveBackup
                 File.Copy(fileName.FullName, backupFullName, false);
 
                 //Only delete additional backups if the new backup was copied successfully
-                if (this.MaxBackups > 0)
+                if (MaxBackups > 0)
                 {
                     DeleteAdditionalBackups(backupChildDirectory);
                 }
                 return DateTime.Now;
             }
-            catch (Exception)
+            catch (IOException)
             {
                 MessageOperations.UserMessage(Resources.AutoBackupException,
-                    MessageTypeEnum.BackupError);
+                    MessageType.BackupError);
                ResetBackup();
                 return null;
             }
@@ -340,8 +388,8 @@ namespace IronmanSaveBackup
 
         private void ResetBackup()
         {
-            this.CancelBackupSource.Cancel();
-            this.BackupActive                              = false;
+            CancelBackupSource.Cancel();
+            BackupActive                                   = false;
             MainWindow._MainWindow.SaveTextbox.IsEnabled   = true;
             MainWindow._MainWindow.BackupTextbox.IsEnabled = true;
             MainWindow._MainWindow.StartButton.IsEnabled   = true;
