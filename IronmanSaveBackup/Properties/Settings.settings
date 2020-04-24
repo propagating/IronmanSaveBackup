@@ -12,12 +12,12 @@
       <Value Profile="(Default)">5</Value>
     </Setting>
     <Setting Name="EnableOnEventBackup" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
+      <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="MaxBackups" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">10</Value>
     </Setting>
-    <Setting Name="MostRecentCampaign" Type="System.Int32" Scope="User">
+    <Setting Name="MostRecentCampaign" Type="System.Int64" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
     <Setting Name="LastUpdated" Type="System.DateTime" Scope="User">

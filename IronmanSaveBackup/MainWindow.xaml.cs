@@ -19,14 +19,14 @@ namespace IronmanSaveBackup
         internal string RecentBackup
         {
             get => MostRecentBackup.Content.ToString();
-            set { this.Dispatcher.Invoke((() => { MostRecentBackup.Content = value; })); }
+            set { Dispatcher.Invoke((() => { MostRecentBackup.Content = value; })); }
         }
 
         internal static MainWindow _MainWindow;
         public MainWindow()
         {
             InitializeComponent();
-            _MainWindow                        = this;
+            _MainWindow                       = this;
             OnEventSaves.IsChecked            = Settings.Default.EnableOnEventBackup;
             BackupTextbox.Text                = Settings.Default.BackupParentFolder;
             SaveTextbox.Text                  = Settings.Default.SaveParentFolder;
@@ -55,33 +55,36 @@ namespace IronmanSaveBackup
 
         private void BackupTextbox_Click(object sender, MouseButtonEventArgs e)
         {
-            var dialog = new FolderBrowserDialog { SelectedPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) };
-            if (string.IsNullOrWhiteSpace(_runningBackup.BackupParentFolder))
+            using (var dialog = new FolderBrowserDialog { SelectedPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) })
             {
-                dialog.SelectedPath = _runningBackup.BackupParentFolder;
+                if (string.IsNullOrWhiteSpace(_runningBackup.BackupParentFolder))
+                {
+                    dialog.SelectedPath = _runningBackup.BackupParentFolder;
+                }
+                var result = dialog.ShowDialog();
+                if (result != System.Windows.Forms.DialogResult.OK) return;
+                BackupTextbox.Text = dialog.SelectedPath;
+                if (BackupTextbox.Text == null) return;
+                _runningBackup.BackupParentFolder = BackupTextbox.Text;
+                _runningBackup.UpdateSettings();
             }
-            var result         = dialog.ShowDialog();
-            if (result != System.Windows.Forms.DialogResult.OK) return;
-            BackupTextbox.Text = dialog.SelectedPath;
-            if (BackupTextbox.Text == null) return;
-            _runningBackup.BackupParentFolder = BackupTextbox.Text;
-            _runningBackup.UpdateSettings();
         }
 
         private void SaveTextbox_Click(object sender, MouseButtonEventArgs e)
         {
-            var dialog = new FolderBrowserDialog { SelectedPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) };
-           if (!string.IsNullOrWhiteSpace(_runningBackup.SaveParentFolder))
+            using (var dialog = new FolderBrowserDialog { SelectedPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) })
             {
-                dialog.SelectedPath = _runningBackup.SaveParentFolder;
+                if (!string.IsNullOrWhiteSpace(_runningBackup.SaveParentFolder))
+                {
+                    dialog.SelectedPath = _runningBackup.SaveParentFolder;
+                }
+                var result = dialog.ShowDialog();
+                if (result != System.Windows.Forms.DialogResult.OK) return;
+                    SaveTextbox.Text = dialog.SelectedPath;
+                if (SaveTextbox.Text == null) return;
+                _runningBackup.SaveParentFolder = SaveTextbox.Text;
+                _runningBackup.UpdateSettings();
             }
-
-            var result       = dialog.ShowDialog();
-            if (result != System.Windows.Forms.DialogResult.OK) return;
-            SaveTextbox.Text = dialog.SelectedPath;
-            if (SaveTextbox.Text == null) return;
-            _runningBackup.SaveParentFolder = SaveTextbox.Text;
-            _runningBackup.UpdateSettings();
         }
 
         private void OnEventSaves_OnClick(object sender, RoutedEventArgs e)
@@ -110,7 +113,7 @@ namespace IronmanSaveBackup
             }
             else
             {
-                MessageOperations.UserMessage(Properties.Resources.FolderNotFound, MessageTypeEnum.DoesNotExistError);
+                MessageOperations.UserMessage(Properties.Resources.FolderNotFound, MessageType.DoesNotExistError);
             }
         }
 
@@ -122,7 +125,7 @@ namespace IronmanSaveBackup
             }
             else
             {
-                MessageOperations.UserMessage(Properties.Resources.FolderNotFound, MessageTypeEnum.DoesNotExistError);
+                MessageOperations.UserMessage(Properties.Resources.FolderNotFound, MessageType.DoesNotExistError);
             }
         }
 
@@ -130,7 +133,7 @@ namespace IronmanSaveBackup
         {
             if (!string.IsNullOrEmpty(BackupTextbox.Text))
             {
-                if (!MessageOperations.ConfirmChoice(MessageChoiceEnum.DeleteChoice)) return;
+                if (!MessageOperations.ConfirmChoice(MessageChoice.DeleteChoice)) return;
                 var backupList = Directory.GetFiles(BackupTextbox.Text, "*.isb", SearchOption.AllDirectories);
                 foreach (var backup in backupList)
                 {
@@ -140,11 +143,11 @@ namespace IronmanSaveBackup
                     }
                     catch (ArgumentNullException)
                     {
-                        MessageOperations.UserMessage(Properties.Resources.FilepathNotFound, MessageTypeEnum.DoesNotExistError);
+                        MessageOperations.UserMessage(Properties.Resources.FilepathNotFound, MessageType.DoesNotExistError);
                     }
                     catch (ArgumentException)
                     {
-                        MessageOperations.UserMessage(Properties.Resources.UnableToDelete, MessageTypeEnum.BackupError);
+                        MessageOperations.UserMessage(Properties.Resources.UnableToDelete, MessageType.BackupError);
                     }
                     catch (Exception)
                     {
@@ -153,11 +156,11 @@ namespace IronmanSaveBackup
 
                 }
 
-                MessageOperations.UserMessage(Properties.Resources.DeleteAllSuccess, MessageTypeEnum.BackupSuccess);
+                MessageOperations.UserMessage(Properties.Resources.DeleteAllSuccess, MessageType.BackupSuccess);
             }
             else
             {
-                MessageOperations.UserMessage(Properties.Resources.FolderNotFound, MessageTypeEnum.DoesNotExistError);
+                MessageOperations.UserMessage(Properties.Resources.FolderNotFound, MessageType.DoesNotExistError);
             }
 
 
@@ -165,17 +168,16 @@ namespace IronmanSaveBackup
 
         private void RestoreBackupText_OnPreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            var dialog = new OpenFileDialog
+            using (var dialog = new OpenFileDialog { Filter = @"Backup Files (*.isb)|*.isb", InitialDirectory = _runningBackup.BackupParentFolder })
             {
-                Filter = @"Backup Files (*.isb)|*.isb",
-                InitialDirectory = _runningBackup.BackupParentFolder
-            };
-            var result                 = dialog.ShowDialog();
-            if (result != System.Windows.Forms.DialogResult.OK) return;
-            RestoreBackupText.Text = dialog.FileName;
-            _runningBackup.RestoreFile = RestoreBackupText.Text;
-            _runningBackup.UpdateSettings();
-
+                var result = dialog.ShowDialog();
+                if (result == System.Windows.Forms.DialogResult.OK)
+                {
+                    RestoreBackupText.Text = dialog.FileName;
+                    _runningBackup.RestoreFile = RestoreBackupText.Text;
+                    _runningBackup.UpdateSettings();
+                }
+            }
         }
 
         private void RestoreBackupButton_OnClick(object sender, RoutedEventArgs e)
@@ -184,11 +186,11 @@ namespace IronmanSaveBackup
             {
                 if (Path.GetExtension(_runningBackup.RestoreFile).ToLower() != ".isb")
                 {
-                    MessageOperations.UserMessage(Properties.Resources.InvalidRestoreFile, MessageTypeEnum.RestoreError);
+                    MessageOperations.UserMessage(Properties.Resources.InvalidRestoreFile, MessageType.RestoreError);
                     RestoreBackupText.Text     = "";
                     _runningBackup.RestoreFile = "";
                 }
-                else if (MessageOperations.ConfirmChoice(MessageChoiceEnum.ReplaceChoice))
+                else if (MessageOperations.ConfirmChoice(MessageChoice.ReplaceChoice))
                 {
                     _runningBackup.RestoreBackup();
                     _runningBackup.UpdateSettings();
@@ -196,7 +198,7 @@ namespace IronmanSaveBackup
             }
             else
             {
-                MessageOperations.UserMessage(Properties.Resources.MissingRestoreFile, MessageTypeEnum.DoesNotExistError);
+                MessageOperations.UserMessage(Properties.Resources.MissingRestoreFile, MessageType.DoesNotExistError);
             }
 
         }
@@ -209,7 +211,7 @@ namespace IronmanSaveBackup
             }
             else
             {
-                MessageOperations.UserMessage(Properties.Resources.FolderNotFound, MessageTypeEnum.DoesNotExistError);
+                MessageOperations.UserMessage(Properties.Resources.FolderNotFound, MessageType.DoesNotExistError);
             }
         }
 

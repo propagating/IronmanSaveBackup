@@ -6,23 +6,23 @@ namespace IronmanSaveBackup
 {
     internal class MessageOperations
     {
-        public static bool ConfirmChoice(MessageChoiceEnum type)
+        public static bool ConfirmChoice(MessageChoice type)
         {
             string message;
             var caption = "";
             switch (type)
             {
-                case MessageChoiceEnum.DeleteChoice:
+                case MessageChoice.DeleteChoice:
                     message     = Resources.DeleteAllBackupWarning;
                     caption     = Resources.DeleteAllBackupCaption;
                     break;
 
-                case MessageChoiceEnum.ReplaceChoice:
+                case MessageChoice.ReplaceChoice:
                         message = Resources.ReplaceExistingWarning;
                         caption = Resources.ReplaceExistingCaption;
                         break;
 
-                case MessageChoiceEnum.InvalidChoice:
+                case MessageChoice.InvalidChoice:
                         message = Resources.InvalidChoiceWarning;
                         caption = Resources.InvalidChoiceCaption;
                         break;
@@ -37,48 +37,49 @@ namespace IronmanSaveBackup
             return (result == DialogResult.Yes);
         }
 
-        public static void UserMessage(string message, MessageTypeEnum type = MessageTypeEnum.GenericError)
+        public static void UserMessage(string message, MessageType type = MessageType.GenericError)
         {
             string caption;
             const MessageBoxButtons buttons = MessageBoxButtons.OK;
+            const MessageBoxOptions options = MessageBoxOptions.RightAlign | MessageBoxOptions.RtlReading;
             switch (type)
             {
                 //Delete backups
-                case MessageTypeEnum.DoesNotExistError:
+                case MessageType.DoesNotExistError:
                     caption = Resources.FolderNotFoundCaption;
-                    MessageBox.Show(message, caption, buttons, MessageBoxIcon.Error);
+                    MessageBox.Show(message, caption, buttons, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, options);
                     break;
-                case MessageTypeEnum.InvalidPathError:
+                case MessageType.InvalidPathError:
                     caption = Resources.InvalidPathCaption;
-                    MessageBox.Show(message, caption, buttons, MessageBoxIcon.Error);
+                    MessageBox.Show(message, caption, buttons, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, options);
                     break;
-                case MessageTypeEnum.FileInUseError:
+                case MessageType.FileInUseError:
                     caption = Resources.InUseCaption;
-                    MessageBox.Show(message, caption, buttons, MessageBoxIcon.Error);
+                    MessageBox.Show(message, caption, buttons, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, options);
                     break;
-                case MessageTypeEnum.BackupError:
+                case MessageType.BackupError:
                     caption = Resources.BackupErrorCaption;
-                    MessageBox.Show(message, caption, buttons, MessageBoxIcon.Error);
+                    MessageBox.Show(message, caption, buttons, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, options);
                     break;
-                case MessageTypeEnum.RestoreError:
+                case MessageType.RestoreError:
                     caption = Resources.RestoreErrorCaption;
-                    MessageBox.Show(message, caption, buttons, MessageBoxIcon.Error);
+                    MessageBox.Show(message, caption, buttons, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, options);
                     break;
-                case MessageTypeEnum.GenericError:
+                case MessageType.GenericError:
                     caption = Resources.GeneralErrorCaption;
-                    MessageBox.Show(message, caption, buttons, MessageBoxIcon.Error);
+                    MessageBox.Show(message, caption, buttons, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, options);
                     break;
-                case MessageTypeEnum.BackupSuccess:
+                case MessageType.BackupSuccess:
                     caption = Resources.BackupSuccessCaption;
-                    MessageBox.Show(message, caption, buttons, MessageBoxIcon.Information);
+                    MessageBox.Show(message, caption, buttons, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, options);
                     break;
-                case MessageTypeEnum.RestoreSuccess:
+                case MessageType.RestoreSuccess:
                     caption = Resources.RestoreSuccessCaption;
-                    MessageBox.Show(message, caption, buttons, MessageBoxIcon.Information);
+                    MessageBox.Show(message, caption, buttons, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, options);
                     break;
                 default:
                     caption = Resources.WeridCaption;
-                    MessageBox.Show(message, caption, buttons, MessageBoxIcon.Error);
+                    MessageBox.Show(message, caption, buttons, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1,options);
                     break;
 
             }
