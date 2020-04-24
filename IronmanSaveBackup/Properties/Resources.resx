@@ -118,10 +118,10 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="FolderNotFound" xml:space="preserve">
-    <value>The folder you selected does not exist or cannot be found.</value>
+	  <value>The folder you selected does not exist, or cannot be found.</value>
   </data>
   <data name="FilepathNotFound" xml:space="preserve">
-    <value>No filepath found for the selected backup.</value>
+	  <value>No file path found for the selected backup.</value>
   </data>
   <data name="UnableToDelete" xml:space="preserve">
     <value>Could not remove all backups in selected folder.</value>
@@ -212,5 +212,11 @@
   </data>
   <data name="SaveRestoreNameChimera" xml:space="preserve">
     <value>{0}-IronMan</value>
+  </data>
+  <data name="BackupFileFilter" xml:space="preserve">
+	  <value>Backup Files (*.isb)|*.isb</value>
+  </data>
+  <data name="FileExtension" xml:space="preserve">
+	  <value>.isb</value>
   </data>
 </root>

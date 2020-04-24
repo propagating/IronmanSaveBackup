@@ -1,5 +1,6 @@
 ﻿using IronmanSaveBackup.Properties;
 using System;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -111,7 +112,7 @@ namespace IronmanSaveBackup
             try
             {
                 File.Copy(RestoreFile, restorePath, true);
-                MessageOperations.UserMessage(string.Format(Resources.SaveRestoredSuccess, Campaign), MessageType.RestoreSuccess);
+                MessageOperations.UserMessage(string.Format(Resources.SaveRestoredSuccess, Campaign, CultureInfo.InvariantCulture), MessageType.RestoreSuccess);
             }
             catch (IOException)
             {
@@ -151,7 +152,7 @@ namespace IronmanSaveBackup
                         DeleteAdditionalBackups(backupChildDirectory);
                     }
                     MessageOperations.UserMessage(
-                        string.Format(Resources.BackupCreatedSuccess, Campaign),
+                        string.Format(Resources.BackupCreatedSuccess, Campaign, CultureInfo.InvariantCulture),
                         MessageType.BackupSuccess);
                     return DateTime.Now;
                 }
@@ -224,13 +225,13 @@ namespace IronmanSaveBackup
             switch (_saveType)
             {
                 case SaveType.Original:
-                    return string.Format(Resources.SaveRestoreNameVanilla, Campaign);
+                    return string.Format(Resources.SaveRestoreNameVanilla, Campaign, CultureInfo.InvariantCulture);
                 case SaveType.WotC:
-                    return string.Format(Resources.SaveRestoreNameWotC, Campaign);
+                    return string.Format(Resources.SaveRestoreNameWotC, Campaign, CultureInfo.InvariantCulture);
                 case SaveType.Chimera:
-                    return string.Format(Resources.SaveRestoreNameChimera, Campaign);
+                    return string.Format(Resources.SaveRestoreNameChimera, Campaign, CultureInfo.InvariantCulture);
                 default:
-                    return string.Format(Campaign.ToString());
+                    return string.Format(Campaign.ToString(), CultureInfo.InvariantCulture);
             }
         }
 
@@ -280,7 +281,7 @@ namespace IronmanSaveBackup
             {
                 while (!cancellationToken.IsCancellationRequested)
                 {
-                    await Task.Run(()=> EventBackup(), cancellationToken);
+                    await Task.Run(EventBackup, cancellationToken);
                 }
             }
             else
@@ -343,7 +344,7 @@ namespace IronmanSaveBackup
         private DateTime? CreateBackup()
         {
             var saveDirectoryInfo = new DirectoryInfo(SaveParentFolder);
-            var files             = saveDirectoryInfo.GetFiles().OrderByDescending(x => x.LastAccessTime).ToList();
+            var files         = saveDirectoryInfo.GetFiles().OrderByDescending(x => x.LastAccessTime).ToList();
             var fileName          = files.FirstOrDefault(x => SavePattern.IsMatch(Path.GetFileName(x.FullName)));
 
             if (fileName == null)

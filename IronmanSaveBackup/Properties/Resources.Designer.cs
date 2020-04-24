@@ -88,6 +88,15 @@ namespace IronmanSaveBackup.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Backup Files (*.isb)|*.isb.
+        /// </summary>
+        internal static string BackupFileFilter {
+            get {
+                return ResourceManager.GetString("BackupFileFilter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Backup Operation Successful.
         /// </summary>
         internal static string BackupSuccessCaption {
@@ -147,6 +156,15 @@ namespace IronmanSaveBackup.Properties {
         internal static string ExceptionOnDelete {
             get {
                 return ResourceManager.GetString("ExceptionOnDelete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .isb.
+        /// </summary>
+        internal static string FileExtension {
+            get {
+                return ResourceManager.GetString("FileExtension", resourceCulture);
             }
         }
         
