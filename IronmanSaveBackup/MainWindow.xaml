@@ -15,7 +15,7 @@
         <Label Grid.Column="0" x:Name="IntervalLabel" Content="Backup Interval (Minutes)" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="30,95,0,0"/>
         <Label Grid.Column="0" x:Name="NumToKeepLabel" Content="Backups to Keep" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="30,130,0,0"/>
         <Label Grid.Column="0" x:Name="RestoreBackupLabel" Content="Restore Backup" HorizontalAlignment="Left" Margin="30,165,0,0" VerticalAlignment="Top" Width="100"/>
-        <Label x:Name="MostRecentBackup" x:FieldModifier="public" Content="N/A" IsEnabled="False" HorizontalContentAlignment="Center"  HorizontalAlignment="Left" Margin="190,278,0,5" VerticalAlignment='Top' Width="250" Grid.ColumnSpan="2"
+        <Label x:Name="MostRecentBackup" x:FieldModifier="public" Content="N/A" IsEnabled="False" HorizontalContentAlignment="Center"  HorizontalAlignment="Left" Margin="190,278,0,5" VerticalAlignment='Top' Width="300" Grid.ColumnSpan="2"
                Grid.Column="0" />
         <Label Grid.Column="0" x:Name="MostRecentLabel" Content="Most Recent Backup" HorizontalAlignment="Left" Margin="30,278,0,0" VerticalAlignment="Top" Width="150"/>
 
